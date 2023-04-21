@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "uid": 163881,
+      "avatar": "http:\/\/moshengapp.oss-cn-beijing.aliyuncs.com\/2022\/07\/25\/08603202207250432167382.jpg",
+      "cname": "阿猴我就",
+      "sex": 1,
+      "age": 18,
+      "lang": [
+        ""
+      ],
+      "comment": [
+        ""
+      ],
+      "chat_content": [
+        ""
+      ],
+      "video_call": 30,
+      "voice_call": 20,
+      "province": "福建省",
+      "region": "莆田市"
+    }
+  ]
+}
