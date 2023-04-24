@@ -13,22 +13,26 @@
 
 class ListenerList {
   ListenerList({
-    List<ListenerRes>? data,}){
+    List<ListenerRes>? data,}) {
     _data = data;
   }
 
   ListenerList.fromJson(dynamic json) {
-    if (json['data'] != null) {
+    if (json != null) {
       _data = [];
-      json['data'].forEach((v) {
+      json.forEach((v) {
         _data?.add(ListenerRes.fromJson(v));
       });
     }
   }
+
   List<ListenerRes>? _data;
-  ListenerList copyWith({  List<ListenerRes>? data,
-  }) => ListenerList(  data: data ?? _data,
-  );
+
+  ListenerList copyWith({ List<ListenerRes>? data,
+  }) =>
+      ListenerList(data: data ?? _data,
+      );
+
   List<ListenerRes>? get data => _data;
 
   Map<String, dynamic> toJson() {
@@ -43,18 +47,18 @@ class ListenerList {
 
 class ListenerRes {
   ListenerRes({
-      num? uid, 
-      String? avatar, 
-      String? cname, 
-      num? sex, 
-      num? age, 
-      List<String>? lang, 
-      List<String>? comment, 
-      List<String>? chatContent, 
-      num? videoCall, 
-      num? voiceCall, 
-      String? province, 
-      String? region,}){
+    num? uid,
+    String? avatar,
+    String? cname,
+    num? sex,
+    num? age,
+    List<String>? lang,
+    List<String>? comment,
+    List<String>? chatContent,
+    num? videoCall,
+    num? voiceCall,
+    String? province,
+    String? region,}) {
     _uid = uid;
     _avatar = avatar;
     _cname = cname;
@@ -67,7 +71,7 @@ class ListenerRes {
     _voiceCall = voiceCall;
     _province = province;
     _region = region;
-}
+  }
 
   ListenerRes.fromJson(dynamic json) {
     _uid = json['uid'];
@@ -77,12 +81,14 @@ class ListenerRes {
     _age = json['age'];
     _lang = json['lang'] != null ? json['lang'].cast<String>() : [];
     _comment = json['comment'] != null ? json['comment'].cast<String>() : [];
-    _chatContent = json['chat_content'] != null ? json['chat_content'].cast<String>() : [];
+    _chatContent =
+    json['chat_content'] != null ? json['chat_content'].cast<String>() : [];
     _videoCall = json['video_call'];
     _voiceCall = json['voice_call'];
     _province = json['province'];
     _region = json['region'];
   }
+
   num? _uid;
   String? _avatar;
   String? _cname;
@@ -95,42 +101,57 @@ class ListenerRes {
   num? _voiceCall;
   String? _province;
   String? _region;
-ListenerRes copyWith({  num? uid,
-  String? avatar,
-  String? cname,
-  num? sex,
-  num? age,
-  List<String>? lang,
-  List<String>? comment,
-  List<String>? chatContent,
-  num? videoCall,
-  num? voiceCall,
-  String? province,
-  String? region,
-}) => ListenerRes(  uid: uid ?? _uid,
-  avatar: avatar ?? _avatar,
-  cname: cname ?? _cname,
-  sex: sex ?? _sex,
-  age: age ?? _age,
-  lang: lang ?? _lang,
-  comment: comment ?? _comment,
-  chatContent: chatContent ?? _chatContent,
-  videoCall: videoCall ?? _videoCall,
-  voiceCall: voiceCall ?? _voiceCall,
-  province: province ?? _province,
-  region: region ?? _region,
-);
+
+  ListenerRes copyWith({ num? uid,
+    String? avatar,
+    String? cname,
+    num? sex,
+    num? age,
+    List<String>? lang,
+    List<String>? comment,
+    List<String>? chatContent,
+    num? videoCall,
+    num? voiceCall,
+    String? province,
+    String? region,
+  }) =>
+      ListenerRes(
+        uid: uid ?? _uid,
+        avatar: avatar ?? _avatar,
+        cname: cname ?? _cname,
+        sex: sex ?? _sex,
+        age: age ?? _age,
+        lang: lang ?? _lang,
+        comment: comment ?? _comment,
+        chatContent: chatContent ?? _chatContent,
+        videoCall: videoCall ?? _videoCall,
+        voiceCall: voiceCall ?? _voiceCall,
+        province: province ?? _province,
+        region: region ?? _region,
+      );
+
   num? get uid => _uid;
+
   String? get avatar => _avatar;
+
   String? get cname => _cname;
+
   num? get sex => _sex;
+
   num? get age => _age;
+
   List<String>? get lang => _lang;
+
   List<String>? get comment => _comment;
+
   List<String>? get chatContent => _chatContent;
+
   num? get videoCall => _videoCall;
+
   num? get voiceCall => _voiceCall;
+
   String? get province => _province;
+
   String? get region => _region;
 
   Map<String, dynamic> toJson() {
@@ -150,4 +171,11 @@ ListenerRes copyWith({  num? uid,
     return map;
   }
 
+  String getSexString() {
+    if (sex == 1) {
+      return "男";
+    } else {
+      return "女";
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
@@ -15,6 +16,7 @@ import '../../database/get_storage_manager.dart';
 import '../../network/bean/user_data_res.dart';
 import '../../network/http_helper.dart';
 import '../../widget/image_m.dart';
+import '../../widget/my_toast.dart';
 
 class EditInfoPage extends BaseUiPage<EditInfoC> {
   EditInfoPage() : super(title: "编辑信息");
@@ -45,7 +47,8 @@ class EditInfoPage extends BaseUiPage<EditInfoC> {
                   child: GetBuilder<EditInfoC>(
                       id: 'head',
                       builder: (c) {
-                        return circleNetworkWidget(c.headerImgUrl, 123.w, 123.w);
+                        return circleNetworkWidget(
+                            c.headerImgUrl, 123.w, 123.w);
                       }),
                 ),
               ),
@@ -142,25 +145,31 @@ class EditInfoPage extends BaseUiPage<EditInfoC> {
   final TextEditingController _controllerInput = TextEditingController();
 
   Widget textFieldNick() {
-    return TextField(
-      style: TextStyle(
-        fontSize: 20.sp,
-        color: C.whiteFFFFFF,
-      ),
-      maxLength: 12,
-      decoration: const InputDecoration(
-        filled: false,
-        contentPadding: EdgeInsets.symmetric(vertical: 4.0),
-        counterText: '',
-        //此处控制最大字符是否显示
-        alignLabelWithHint: true,
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0x00FEC693), width: 0)),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0x00FEC693), width: 0)),
-      ),
-      controller: _controllerInput,
-    );
+    return GetBuilder<EditInfoC>(
+        id: 'page',
+        builder: (c) {
+          final name = c.mineInfo?.cname ?? "";
+          _controllerInput.text = name;
+          return TextField(
+            style: TextStyle(
+              fontSize: 20.sp,
+              color: C.whiteFFFFFF,
+            ),
+            maxLength: 12,
+            decoration: const InputDecoration(
+              filled: false,
+              contentPadding: EdgeInsets.symmetric(vertical: 4.0),
+              counterText: '',
+              //此处控制最大字符是否显示
+              alignLabelWithHint: true,
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0x00FEC693), width: 0)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0x00FEC693), width: 0)),
+            ),
+            controller: _controllerInput,
+          );
+        });
   }
 
   Widget _sex() {
@@ -183,8 +192,10 @@ class EditInfoPage extends BaseUiPage<EditInfoC> {
     return Padding(
       padding: EdgeInsets.all(20.w),
       child: TextButton(
-          onPressed: () {
-            controller.finish();
+          onPressed: () async {
+            EasyLoading.show(status: "保存中...");
+            await controller.finish(_controllerInput.text);
+            EasyLoading.dismiss();
           },
           child: Text(
             '确定',
@@ -335,7 +346,32 @@ class EditInfoC extends BaseController {
   var selected = DateTime(2000, 1, 1);
   UserDataRes? mineInfo;
 
-  void finish() {}
+  Future<void> finish(String nickName) async {
+    if (localImgUrl != null) {
+      final avatar = await fileUploadUrl(localImgUrl!);
+      if (!avatar.isOk()) {
+        MyToast.show(avatar.msg);
+        return;
+      } else {
+        final avatarUrl = avatar.data;
+        if (avatarUrl != null) {
+          headerImgUrl = avatarUrl;
+        }
+      }
+    }
+
+    final r = await updateUserInfo({
+      'avatar': headerImgUrl,
+      'cname': nickName,
+      'birthday': _getBirthday(),
+      'lang': selectLanguage,
+    });
+    if (r.isOk()) {
+      Get.back();
+    } else {
+      MyToast.show(r.msg);
+    }
+  }
 
   bool isMan() {
     return false;
@@ -372,8 +408,9 @@ class EditInfoC extends BaseController {
   void _setSelectedBirthday() {
     try {
       final list = mineInfo?.birthday?.split("-") ?? <String>[];
-      selected = DateTime( int.parse(list[0]) , int.parse(list[1]), int.parse(list[2]));
-      birthday=_getBirthday();
+      selected =
+          DateTime(int.parse(list[0]), int.parse(list[1]), int.parse(list[2]));
+      birthday = _getBirthday();
     } catch (e) {
       logger.e("mineInfo${mineInfo?.birthday?.split("-")} $e");
     }
@@ -395,6 +432,6 @@ class EditInfoC extends BaseController {
     headerImgUrl = mineInfo?.avatar ?? "";
     selectLanguage = mineInfo?.lang ?? [];
     _setSelectedBirthday();
-    update(['head', 'page','language']);
+    update(['head', 'page', 'language']);
   }
 }

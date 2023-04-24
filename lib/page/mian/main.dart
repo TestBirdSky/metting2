@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/page/listener/listener.dart';
 import 'package:metting/page/message/message.dart';
-import 'package:metting/tool/view_tools.dart';
 
 import '../../base/BaseController.dart';
 import '../../base/BaseStatelessPage.dart';
@@ -13,6 +11,7 @@ import '../mine/mine.dart';
 import 'bottom_menu.dart';
 
 class MainPage extends BaseStatelessPage<MainC> {
+
   final List<Widget> _pageList = [
     HomePage(),
     ListenerPage(),

@@ -3,9 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseUiPage.dart';
+import 'package:metting/network/bean/front_response.dart';
+import 'package:metting/network/http_helper.dart';
 import 'package:metting/page/home/notebook.dart';
 import 'package:metting/page/home/soul.dart';
 import 'package:metting/tool/log.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../base/BaseController.dart';
 import '../../core/common_configure.dart';
@@ -73,11 +76,11 @@ class HomePage extends BaseUiPage<HomeC> {
               ),
               Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      Get.to(NoteBookPage());
-                    },
-                    child: _btn("记忆留存", "留下片刻的记忆却会用一生的时间来回想", "home_4btn"),
-                  )),
+                onTap: () {
+                  Get.to(NoteBookPage());
+                },
+                child: _btn("记忆留存", "留下片刻的记忆却会用一生的时间来回想", "home_4btn"),
+              )),
               // Expanded(
               //     child: GestureDetector(
               //   onTap: () {},
@@ -160,7 +163,43 @@ class HomePage extends BaseUiPage<HomeC> {
 }
 
 class HomeC extends BaseController {
-  bool isBoy(int index) {
-    return index % 2 == 0;
+  final List<FrontResponse> list = [];
+
+  bool isBoy(FrontResponse bean) {
+    return bean.sex==1;
+  }
+
+  int page = 1;
+
+  Future<void> refreshList(RefreshController c) async {
+    page = 1;
+    final base = await getFrontPage(page);
+    if (base.isOk()) {
+      final list = base.data?.data;
+      if (list != null) {
+        list.addAll(list);
+      }
+      page++;
+      c.resetNoData();
+      c.refreshCompleted();
+    } else {
+      c.refreshFailed();
+    }
+  }
+
+  void load(RefreshController c) async {
+    final base = await getFrontPage(page);
+    if (base.isOk()) {
+      final list = base.data?.data;
+      if (list != null) {
+        list.addAll(list);
+        page++;
+        c.refreshCompleted();
+      } else {
+        c.loadNoData();
+      }
+    } else {
+      c.refreshFailed();
+    }
   }
 }

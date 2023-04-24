@@ -13,6 +13,7 @@ import 'package:metting/tool/view_tools.dart';
 import 'package:pull_to_refresh/src/smart_refresher.dart';
 
 import '../../base/BaseController.dart';
+import '../../network/bean/topic_list_res.dart';
 import '../../widget/bottom_popup.dart';
 import '../../widget/image_m.dart';
 
@@ -29,17 +30,17 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
 
   void _onLoading() {
     logger.i("onLoading");
-    controller.load();
+    controller.load(refreshController);
   }
 
   //
   void _onRefresh() {
-    controller.refresh();
+    controller._refresh(refreshController);
   }
 
   //
   // @override
-  RefreshController refreshController() =>
+  RefreshController refreshController =
       RefreshController(initialRefresh: false);
 
   @override
@@ -49,38 +50,42 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
         Container(
           color: C.PAGE_THEME_BG,
           padding: EdgeInsets.only(left: 12.w, right: 12.w, top: 50.h),
-          child: RefreshConfiguration(
-            // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
-            hideFooterWhenNotFull: true,
-            child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: const MyClassicHeader(),
-              footer: const MyClassicFooter(),
-              // 配置默认底部指示器
-              controller: refreshController(),
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              child: MasonryGridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 9.h,
-                itemCount: controller.listenerList.length,
-                crossAxisSpacing: 12.w,
-                itemBuilder: (context, index) {
-                  final item =
-                      _ItemView(listenerRes: controller.listenerList[index]);
-                  if (index == controller.listenerList.length - 1) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 60.h),
-                      child: item,
-                    );
-                  } else {
-                    return item;
-                  }
-                },
-              ),
-            ),
-          ),
+          child: GetBuilder<ListenerPageC>(
+              id: 'list',
+              builder: (c) {
+                return RefreshConfiguration(
+                  // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
+                  hideFooterWhenNotFull: true,
+                  child: SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: true,
+                    header: const MyClassicHeader(),
+                    footer: const MyClassicFooter(),
+                    // 配置默认底部指示器
+                    controller: refreshController,
+                    onRefresh: _onRefresh,
+                    onLoading: _onLoading,
+                    child: MasonryGridView.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 9.h,
+                      itemCount: controller.listenerList.length,
+                      crossAxisSpacing: 12.w,
+                      itemBuilder: (context, index) {
+                        final item = _ItemView(
+                            listenerRes: controller.listenerList[index]);
+                        if (index == controller.listenerList.length - 1) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 60.h),
+                            child: item,
+                          );
+                        } else {
+                          return item;
+                        }
+                      },
+                    ),
+                  ),
+                );
+              }),
         ),
         Container(
           height: 50.h,
@@ -102,34 +107,45 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
   List<Widget> _topMenu() {
     final list = <Widget>[];
     for (var element in controller.topItem) {
-      list.add(_topMenuItem(element, Colors.amberAccent));
+      if (element.id != controller.curSelectedTopicId) {
+        list.add(_topMenuItem(element));
+      }
     }
     return list;
   }
 
-  Widget _topMenuItem(String info, Color bgColor) {
+  Widget _topMenuItem(TopicBean bean) {
+    String info = bean.title ?? "";
+    Color bgColor = Colors.amberAccent;
     return Stack(
       children: [
         Align(
           alignment: Alignment.center,
-          child: Container(
-            height: 26.h,
-            width: 82.w,
-            margin: EdgeInsets.symmetric(horizontal: 3.w),
-            decoration: BoxDecoration(
-                color: bgColor,
-                // border: Border.all(color: Color(0xFFFEC693), width: 1.w),
-                borderRadius: BorderRadius.all(Radius.circular(5.w))),
-            child: Stack(
-              children: [
-                Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      info,
-                      style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                      textAlign: TextAlign.center,
-                    ))
-              ],
+          child: InkWell(
+            onTap: () {
+              controller.choiceTopic(bean);
+
+              _onRefresh();
+            },
+            child: Container(
+              height: 26.h,
+              width: 82.w,
+              margin: EdgeInsets.symmetric(horizontal: 3.w),
+              decoration: BoxDecoration(
+                  color: bgColor,
+                  // border: Border.all(color: Color(0xFFFEC693), width: 1.w),
+                  borderRadius: BorderRadius.all(Radius.circular(5.w))),
+              child: Stack(
+                children: [
+                  Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        info,
+                        style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                        textAlign: TextAlign.center,
+                      ))
+                ],
+              ),
             ),
           ),
         )
@@ -139,42 +155,68 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
 }
 
 class ListenerPageC extends BaseController {
-  List<String> topItem = [
-    '婚姻',
-    '爱情',
-    '婚姻444444',
-    '爱情',
-    '婚姻',
-    '爱情',
-    '婚姻',
-    '爱情',
-  ];
-
+  List<TopicBean> topItem = [];
+  num curSelectedTopicId = -1;
   List<ListenerRes> listenerList = [];
 
   @override
   void onInit() {
     super.onInit();
+    _getTopicList();
   }
 
   int page = 0;
 
-  void refresh() async {
-    page = 0;
-    final base = await getListener(page);
+  void choiceTopic(TopicBean bean) {
+    curSelectedTopicId = bean.id ?? -1;
+    update(['top']);
+  }
+
+  void _getTopicList() async {
+    final bean = await getTopicList();
+    if (bean.isOk()) {
+      topItem.addAll(bean.data?.data ?? []);
+      update(['top']);
+    }
+  }
+
+  List<int> _getCurTopicId() {
+    return curSelectedTopicId!=-1? [curSelectedTopicId.toInt()] : [];
+  }
+
+  void _refresh(RefreshController refreshController) async {
+    if (topItem.isEmpty) _getTopicList();
+    page = 1;
+    final base = await getListener(page, topicId: _getCurTopicId());
+    if (base.isOk()) {
+      final list = base.data?.data;
+      listenerList.clear();
+      if (list != null) {
+        listenerList.addAll(list);
+      }
+      refreshController.refreshCompleted();
+      update(['list']);
+      page++;
+    } else {
+      refreshController.refreshFailed();
+    }
+  }
+
+  void load(RefreshController refreshController) async {
+    final base = await getListener(page, topicId: _getCurTopicId());
     if (base.isOk()) {
       final list = base.data?.data;
       if (list != null) {
         listenerList.addAll(list);
+        refreshController.refreshCompleted();
+        update(['list']);
+      } else {
+        page++;
+        refreshController.loadNoData();
       }
-      page++;
+    } else {
+      refreshController.refreshFailed();
     }
-  }
-
-
-
-  void load() async {
-
   }
 }
 
@@ -215,7 +257,7 @@ class _ItemView extends GetView<ListenerPageC> {
     for (var element in list) {
       t += element;
     }
-    if (list.isNotEmpty) return const SizedBox();
+    if (list.isEmpty) return const SizedBox();
     return Column(
       children: [
         SizedBox(
@@ -242,7 +284,7 @@ class _ItemView extends GetView<ListenerPageC> {
     for (var element in list) {
       t += element;
     }
-    if (list.isNotEmpty) return const SizedBox();
+    if (list.isEmpty) return const SizedBox();
     return Column(
       children: [
         SizedBox(
@@ -305,10 +347,27 @@ class _ItemView extends GetView<ListenerPageC> {
               height: 45.w,
               child: circleNetworkWidget(listenerRes.avatar ?? "", 45.w, 45.w),
             ),
+            SizedBox(
+              width: 5.w,
+            ),
             Expanded(
                 child: Column(
-              children: [Text('ttt')],
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  listenerRes.cname ?? "",
+                  maxLines: 1,
+                  style: TextStyle(color: Color(0xff6A6A6A), fontSize: 10.sp),
+                ),
+                Text(
+                  '${listenerRes.age}-${listenerRes.getSexString()}',
+                  style: TextStyle(color: Color(0xffAAA9A9), fontSize: 10.sp),
+                )
+              ],
             )),
+            SizedBox(
+              width: 5.w,
+            ),
             InkWell(
               child: Image.asset(
                 getImagePath('mine_phone'),

@@ -1,24 +1,26 @@
 {
-  "data": [
+  "uid": 164027,
+  "avatar": "http:\/\/moshengapp.oss-cn-beijing.aliyuncs.com\/2023\/04\/12\/33a7c202304122146596721.jpg",
+  "list": [
     {
-      "uid": 163881,
-      "avatar": "http:\/\/moshengapp.oss-cn-beijing.aliyuncs.com\/2022\/07\/25\/08603202207250432167382.jpg",
-      "cname": "阿猴我就",
-      "sex": 1,
-      "age": 18,
-      "lang": [
-        ""
-      ],
-      "comment": [
-        ""
-      ],
-      "chat_content": [
-        ""
-      ],
-      "video_call": 30,
-      "voice_call": 20,
-      "province": "福建省",
-      "region": "莆田市"
+      "time": "04-11",
+      "content": "啊啊啊啊啊啊啊啊啊"
+    },
+    {
+      "time": "04-11",
+      "content": "啊啊啊啊啊啊啊啊啊"
+    },
+    {
+      "time": "04-11",
+      "content": "啊啊啊啊啊啊啊啊啊"
+    },
+    {
+      "time": "04-11",
+      "content": "啊啊啊啊啊啊啊啊啊"
+    },
+    {
+      "time": "04-11",
+      "content": "啊啊啊啊啊啊啊啊啊"
     }
   ]
 }

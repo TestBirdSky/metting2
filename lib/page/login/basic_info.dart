@@ -296,7 +296,7 @@ class BasicInfoPage extends BaseStatelessPage<BaseInfoC> {
       child: TextButton(
           onPressed: () async {
             controller.nickName = _controllerInput.text;
-            EasyLoading.show(status: "加载中...");
+            EasyLoading.show(status: "保存中...");
             await controller.finishClick();
             EasyLoading.dismiss();
           },

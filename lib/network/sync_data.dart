@@ -7,7 +7,10 @@ import '../tool/log.dart';
 import 'base_data.dart';
 import 'bean/chat_lang.dart';
 import 'bean/file_response.dart';
+import 'bean/front_response.dart';
 import 'bean/login_response.dart';
+import 'bean/note_details.dart';
+import 'bean/topic_list_res.dart';
 import 'bean/user_data_res.dart';
 
 final errorBasePageData = BasePageData(errorCodeNetworkError, '网络异常', null);
@@ -29,7 +32,13 @@ BasePageData<T> syncData<T>(Response response) {
       } else if (k == "ChatLang") {
         data = ChatLang.fromJson(respData.data) as T;
       } else if (k == "ListenerList") {
-        data = ListenerList.fromJson(respData) as T;
+        data = ListenerList.fromJson(respData.data) as T;
+      } else if (k == "FrontResponse") {
+        data = FrontResponse.fromListJson(respData.data) as T;
+      } else if (k == "TopicBean") {
+        data = TopicBean.fromListJson(respData.data) as T;
+      } else if (k == "ListNoteDetail") {
+        data = ListNoteDetail.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type');
         data = response.data;
