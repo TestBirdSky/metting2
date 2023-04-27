@@ -10,6 +10,7 @@ import 'bean/file_response.dart';
 import 'bean/front_response.dart';
 import 'bean/login_response.dart';
 import 'bean/note_details.dart';
+import 'bean/random_nickname.dart';
 import 'bean/topic_list_res.dart';
 import 'bean/user_data_res.dart';
 
@@ -39,8 +40,10 @@ BasePageData<T> syncData<T>(Response response) {
         data = TopicBean.fromListJson(respData.data) as T;
       } else if (k == "ListNoteDetail") {
         data = ListNoteDetail.fromJson(respData.data) as T;
+      } else if (k == "RandomNickname") {
+        data = RandomNickname.fromJson(respData.data) as T;
       } else {
-        logger.i('syncData not set data Type');
+        logger.i('syncData not set data Type${response.data}');
         data = response.data;
       }
       return BasePageData(respData.code, respData.msg, data);

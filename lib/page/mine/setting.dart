@@ -121,7 +121,7 @@ class SettingPage extends BaseUiPage<SettingC> {
                 },
                 child: Text(
                   '注销账号',
-                  style: TextStyle(color: Color(0xff292929), fontSize: 22.sp),
+                  style: TextStyle(color: Colors.white, fontSize: 22.sp),
                 ),
                 style: ButtonStyle(
                     enableFeedback: false,

@@ -12,12 +12,13 @@ import 'bean/chat_lang.dart';
 import 'bean/create_record_response.dart';
 import 'bean/file_response.dart';
 import 'bean/front_response.dart';
+import 'bean/random_nickname.dart';
 import 'bean/topic_list_res.dart';
 import 'dio_helper.dart';
 import 'sync_data.dart';
 
 Map _addCommonInfo(Map map) {
-  map['uid'] = getUID();
+  map['uid'] = getMineUID();
   return map;
 }
 
@@ -49,7 +50,7 @@ Future<BasePageData<LoginResponse?>> loginPhone(
         .post('index/Login/codeLogin', data: {'phone': phone, 'code': code});
     final r = syncData<LoginResponse>(response);
     logger.i('r${r.data?.toJson()}');
-    saveUid(r.data?.uid);
+    saveMineUid(r.data?.uid);
 
     return r;
   } catch (e) {
@@ -267,10 +268,44 @@ Future<BasePageData<ListNoteDetail?>> getNoteDetails(int uid, int page) async {
 
 Future<BasePageData<ListUserNotesBean?>> getMemoryList(int page) async {
   try {
-    Response response = await getDio().post('index/Memory/memoryList',
-        data: _addCommonInfo({"page": page}));
+    Response response = await getDio()
+        .post('index/Memory/memoryList', data: _addCommonInfo({"page": page}));
     final data = syncData<ListUserNotesBean>(response);
     return data;
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData<String?>> getRandName() async {
+  try {
+    Response response =
+        await getDio().post('index/User/randCname', data: _addCommonInfo({}));
+    final data = syncData<RandomNickname>(response);
+    return BasePageData(data.code, data.msg, data.data?.nicName);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData> addFeedback(String content, List<String> img) async {
+  List<String> urlOSS = [];
+  int length = img.length;
+  for (int i = 0; i < length; i++) {
+    BasePageData<String?> data = await fileUploadUrl(img[i]);
+    if (data.isOk()) {
+      if (data.data != null) {
+        urlOSS.add(data.data ?? "");
+      }
+    }
+  }
+  try {
+    Response response = await getDio().post('index/share/addFeedback',
+        data: _addCommonInfo(
+            {'content': content, 'img': urlOSS, 'userModel': 'iphone'}));
+    return syncData(response);
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;

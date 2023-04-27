@@ -417,7 +417,7 @@ class EditInfoC extends BaseController {
   }
 
   void _getInfo() async {
-    final data = await getUserData(getUID());
+    final data = await getUserData(getMineUID());
     if (data.isOk()) {
       mineInfo = data.data;
       if (mineInfo != null) {
@@ -428,7 +428,7 @@ class EditInfoC extends BaseController {
   }
 
   void _updateInfo() {
-    mineInfo = getUserBasic(getUID());
+    mineInfo = getUserBasic(getMineUID());
     headerImgUrl = mineInfo?.avatar ?? "";
     selectLanguage = mineInfo?.lang ?? [];
     _setSelectedBirthday();

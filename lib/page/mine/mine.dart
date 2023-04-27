@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -220,12 +217,12 @@ class MineC extends BaseController {
   @override
   void onReady() {
     super.onReady();
-    mineInfo = getUserBasic(getUID());
+    mineInfo = getUserBasic(getMineUID());
     _updateInfo();
   }
 
   void _getInfo() async {
-    final data = await getUserData(getUID());
+    final data = await getUserData(getMineUID());
     if (data.isOk()) {
       mineInfo = data.data;
       if (mineInfo != null) {

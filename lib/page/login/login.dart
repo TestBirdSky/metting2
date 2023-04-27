@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/network/bean/login_response.dart';
 import 'package:metting/page/mian/main.dart';
-import 'package:metting/tool/log.dart';
 import 'package:metting/widget/my_toast.dart';
 
 import '../../base/BaseController.dart';
@@ -365,7 +364,8 @@ class LoginC extends BaseController {
     if (res.sex == 0) {
       Get.off(BasicInfoPage());
     } else {
-      Get.off(MainPage());
+      // Get.off(MainPage());
+      Get.off(BasicInfoPage());
     }
   }
 }

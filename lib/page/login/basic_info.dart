@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
 import 'package:metting/base/BaseStatelessPage.dart';
 import 'package:metting/page/mian/main.dart';
+import 'package:metting/tool/log.dart';
 import 'package:metting/widget/my_toast.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
@@ -44,7 +44,9 @@ class BasicInfoPage extends BaseStatelessPage<BaseInfoC> {
                 child: _icon(),
               ),
               _info(),
-              SizedBox(height: 90.h,),
+              SizedBox(
+                height: 90.h,
+              ),
               _finishBtn(),
             ],
           ),
@@ -111,17 +113,23 @@ class BasicInfoPage extends BaseStatelessPage<BaseInfoC> {
               children: [
                 Text("昵称:", style: TextStyle(color: C.FEC693, fontSize: 24.sp)),
                 Expanded(
-                    child: Padding(
-                  child: textFieldNick(),
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                )),
+                  child: Container(
+                    child: GetBuilder<BaseInfoC>(
+                        id: 'name',
+                        builder: (builder) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: textFieldNick(),
+                          );
+                        }),
+                  ),
+                ),
                 InkWell(
                   child: Image.asset(
                     getImagePath('ic_refresh'),
                   ),
                   onTap: () {
                     controller.refreshNickName();
-                    _controllerInput.text = "2222";
                   },
                 )
               ],
@@ -264,13 +272,16 @@ class BasicInfoPage extends BaseStatelessPage<BaseInfoC> {
   }
 
   Widget textFieldNick() {
+    _controllerInput.text = controller.nickName;
+    _controllerInput.selection = TextSelection.fromPosition(
+        TextPosition(offset: _controllerInput.text.length));
     return TextField(
       style: TextStyle(
         fontSize: 20.sp,
         color: C.whiteFFFFFF,
       ),
-      maxLength: 12,
-      decoration: InputDecoration(
+      maxLength: 16,
+      decoration: const InputDecoration(
         filled: false,
         contentPadding: EdgeInsets.symmetric(vertical: 4.0),
         counterText: '',
@@ -305,7 +316,7 @@ class BasicInfoPage extends BaseStatelessPage<BaseInfoC> {
               backgroundColor: MaterialStateProperty.all(Color(0xffFEC693)),
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
-                  side: BorderSide(
+                  side: const BorderSide(
                     width: 0.5,
                     color: Color(0xffFEC693),
                   ),
@@ -406,6 +417,7 @@ class BaseInfoC extends BaseController {
   void onInit() {
     super.onInit();
     language.addAll(getChatLangFStroage().chatLang ?? []);
+    refreshNickName();
   }
 
   void setBirthday(DateTime day) {
@@ -419,8 +431,14 @@ class BaseInfoC extends BaseController {
     update(['head']);
   }
 
-  void refreshNickName() {
-    getChatLangFStroage();
+  void refreshNickName() async {
+    final data = await getRandName();
+    logger.i('refreshNickName $data --> ${data.data}');
+    if (data.isOk()) {
+      nickName = data.data ?? "";
+      logger.i('refreshNickName $nickName');
+      update(['name']);
+    }
   }
 
   Future<void> finishClick() async {

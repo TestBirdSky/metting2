@@ -8,11 +8,11 @@ final _firstInitStorage = GetStorage('firstInitStorage');
 
 final _commonStorage = GetStorage();
 
-int getUID() {
+int getMineUID() {
   return _firstInitStorage.read('uid') ?? -1;
 }
 
-Future<void> saveUid(int? uid) {
+Future<void> saveMineUid(int? uid) {
   logger.i('saveUid $uid');
   return _firstInitStorage.write('uid', uid);
 }
