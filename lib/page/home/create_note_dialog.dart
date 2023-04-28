@@ -1,42 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:metting/network/http_helper.dart';
+import 'package:metting/widget/loading.dart';
+import 'package:metting/widget/my_toast.dart';
 
 void showCreateNoteDialog(BuildContext context) {
-  showDialog(context: context, builder: (context){
-    final TextEditingController _controller = TextEditingController();
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
-      decoration: BoxDecoration(
-          color: Color(0xff333333),
-          border: Border.all(color: Color(0xff82361B), width: 1.h),
-          borderRadius: BorderRadius.all(Radius.circular(5.w))),
-      child: Column(
-        children: [
-          Text(
-            '添加日记',
-            style: TextStyle(fontSize: 16.sp, color: Colors.white),
+  showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController _controller = TextEditingController();
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
+          decoration: BoxDecoration(
+              color: Color(0xff333333),
+              border: Border.all(color: Color(0xff82361B), width: 1.h),
+              borderRadius: BorderRadius.all(Radius.circular(5.w))),
+          child: Column(
+            children: [
+              Text(
+                '添加日记',
+                style: TextStyle(fontSize: 16.sp, color: Colors.white),
+              ),
+              Container(
+                height: 300.h,
+                margin: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Color(0xff82361B), width: 1.h),
+                    borderRadius: BorderRadius.all(Radius.circular(5.w))),
+                child: textField(_controller),
+              ),
+              textButtonLogin(() async {
+                final content = _controller.text;
+                if (content.isEmpty) return;
+                LoadingUtils.showLoading();
+                final data = await addNote(content);
+                if (data.isOk()) {
+                  MyToast.show('添加成功');
+                  Get.back();
+                }
+                LoadingUtils.dismiss();
+              })
+            ],
           ),
-          Container(
-            height: 300.h,
-            margin: EdgeInsets.symmetric(horizontal: 16.w),
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Color(0xff82361B), width: 1.h),
-                borderRadius: BorderRadius.all(Radius.circular(5.w))),
-            child: textField(_controller),
-          ),
-          textButtonLogin((){
-
-          })
-        ],
-      ),
-    );
-  });
+        );
+      });
 }
-
-
 
 Widget textField(TextEditingController controller) {
   return TextField(
