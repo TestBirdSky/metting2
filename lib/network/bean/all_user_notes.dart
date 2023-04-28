@@ -4,18 +4,17 @@
 
 class ListUserNotesBean {
   List<UserNotesBean>? _data;
+
   List<UserNotesBean>? get data => _data;
 
   ListUserNotesBean.fromJson(dynamic json) {
-    if (json!= null) {
+    if (json != null) {
       _data = [];
       json.forEach((v) {
         _data?.add(UserNotesBean.fromJson(v));
       });
     }
   }
-
-
 }
 
 class UserNotesBean {
@@ -43,6 +42,14 @@ class UserNotesBean {
   num? _uid;
   String? _avatar;
   List<ListInfo>? _list;
+
+  String getShowInfo() {
+    String info = '';
+    _list?.forEach((element) {
+      info += "${element._content}\n";
+    });
+    return info;
+  }
 
   UserNotesBean copyWith({
     num? uid,

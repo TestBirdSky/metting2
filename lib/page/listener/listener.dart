@@ -40,8 +40,7 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
 
   //
   // @override
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: true);
 
   @override
   Widget createBody(BuildContext context) {
@@ -181,7 +180,7 @@ class ListenerPageC extends BaseController {
   }
 
   List<int> _getCurTopicId() {
-    return curSelectedTopicId!=-1? [curSelectedTopicId.toInt()] : [];
+    return curSelectedTopicId != -1 ? [curSelectedTopicId.toInt()] : [];
   }
 
   void _refresh(RefreshController refreshController) async {
@@ -210,8 +209,8 @@ class ListenerPageC extends BaseController {
         listenerList.addAll(list);
         refreshController.refreshCompleted();
         update(['list']);
-      } else {
         page++;
+      } else {
         refreshController.loadNoData();
       }
     } else {

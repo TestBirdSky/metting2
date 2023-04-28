@@ -79,7 +79,7 @@ class BasicInfoPage extends BaseStatelessPage<BaseInfoC> {
                         );
                       } else {
                         return Image.asset(
-                            getImagePath('ic_default_person_icon'));
+                            getImagePath('ic_default_icon1'));
                       }
                     }),
               ),

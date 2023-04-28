@@ -7,9 +7,11 @@ import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
 import 'package:metting/base/base_refresh_page.dart';
 import 'package:metting/core/common_configure.dart';
+import 'package:metting/network/http_helper.dart';
 import 'package:metting/page/home/note_details.dart';
 import 'package:pull_to_refresh/src/smart_refresher.dart';
 
+import '../../network/bean/all_user_notes.dart';
 import '../../widget/image_m.dart';
 
 class NoteBookPage extends BaseRefreshPage<NoteBookC> {
@@ -20,21 +22,25 @@ class NoteBookPage extends BaseRefreshPage<NoteBookC> {
 
   @override
   RefreshController refreshController() =>
-      RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: true);
 
   @override
   Widget refreshLayout() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-      child: MasonryGridView.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 0.h,
-        itemCount: 30,
-        crossAxisSpacing: 0.w,
-        itemBuilder: (context, index) {
-          return _ItemView(index);
-        },
-      ),
+      child: GetBuilder<NoteBookC>(
+          id: 'page',
+          builder: (c) {
+            return MasonryGridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 0.h,
+              itemCount: controller.list.length,
+              crossAxisSpacing: 0.w,
+              itemBuilder: (context, index) {
+                return _ItemView(index);
+              },
+            );
+          }),
     );
   }
 
@@ -66,6 +72,7 @@ class NoteBookPage extends BaseRefreshPage<NoteBookC> {
   }
 
   Widget _itemLeft(int index) {
+    final bean = controller.list[index];
     double margin = 0;
     if (index == 0) margin = 18.w;
     return Stack(
@@ -90,7 +97,7 @@ class NoteBookPage extends BaseRefreshPage<NoteBookC> {
                 child: GetBuilder<NoteBookC>(
                     id: 'head',
                     builder: (c) {
-                      return circleNetworkWidget('c.headerImgUrl', 36.w, 36.w);
+                      return circleNetworkWidget(bean.avatar ?? "", 36.w, 36.w);
                     }),
               ),
             ),
@@ -103,13 +110,14 @@ class NoteBookPage extends BaseRefreshPage<NoteBookC> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 36.w, right: 16.w),
-          child: _note(index),
+          child: _note(bean),
         )
       ],
     );
   }
 
   Widget _itemRight(int index) {
+    final bean = controller.list[index];
     return Stack(
       children: [
         Container(
@@ -126,44 +134,70 @@ class NoteBookPage extends BaseRefreshPage<NoteBookC> {
                 width: 36.w,
                 height: 36.w,
                 padding: EdgeInsets.all(1.w),
-                child: GetBuilder<NoteBookC>(
-                    id: 'head',
-                    builder: (c) {
-                      return circleNetworkWidget('c.headerImgUrl', 36.w, 36.w);
-                    }),
+                child: circleNetworkWidget(bean.avatar ?? "", 36.w, 36.w),
               ),
             ),
           ]),
         ),
         Padding(
           padding: EdgeInsets.only(left: 16.w, right: 36.w),
-          child: _note(index),
+          child: _note(bean),
         )
       ],
     );
   }
 
-  Widget _note(int index) {
+  Widget _note(UserNotesBean bean) {
     return GestureDetector(
       onTap: () {
-        Get.to(NoteDetailsPage(title: "title"));
+        Get.to(NoteDetailsPage(), arguments: {'uid': bean.uid});
       },
       child: Container(
         height: 114.h,
         margin: EdgeInsets.only(top: 38.w),
-        child: Column(
-          children: [
-            Text("data14444444444433333333"),
-            Text("data14444444444433333333"),
-            Text("data14444444444433333333"),
-            Text("data14444444444433333333"),
-            Text("data3332"),
-            Text("data3"),
-          ],
-        ),
+        child:
+            Align(alignment: Alignment.center, child: Text(bean.getShowInfo())),
       ),
     );
   }
 }
 
-class NoteBookC extends BaseController {}
+class NoteBookC extends BaseController {
+  List<UserNotesBean> list = [];
+
+  int page = 1;
+
+  void onRefresh(RefreshController refreshController) async {
+    page = 1;
+    final base = await getMemoryList(page);
+    if (base.isOk()) {
+      final liData = base.data?.data;
+      list.clear();
+      if (liData != null) {
+        list.addAll(liData);
+      }
+      refreshController.refreshCompleted();
+      update(['list']);
+      page++;
+    } else {
+      refreshController.refreshFailed();
+    }
+  }
+
+  void load(RefreshController refreshController) async {
+    final base = await getMemoryList(page);
+    if (base.isOk()) {
+      final liData = base.data?.data;
+      if (liData != null) {
+        page++;
+        list.addAll(liData);
+        refreshController.refreshCompleted();
+        update(['list']);
+      } else {
+        refreshController.loadNoData();
+      }
+    } else {
+      refreshController.refreshFailed();
+    }
+  }
+}

@@ -117,7 +117,7 @@ class MinePage extends BaseUiPage<MineC> {
       child: GetBuilder<MineC>(
         id: "pageSelect",
         builder: (c) {
-          if (c.isSelectedMyInfo) {
+          if (selectId==0) {
             return Row(
               children: [
                 Expanded(
@@ -129,7 +129,8 @@ class MinePage extends BaseUiPage<MineC> {
                     child: InkWell(
                       child: _unselected("我的故事"),
                       onTap: () {
-                        c.isSelectedMyInfo = false;
+                        selectId = 1;
+                        _pageSelected();
                         c.update(["pageSelect"]);
                       },
                     )),
@@ -143,8 +144,9 @@ class MinePage extends BaseUiPage<MineC> {
                     child: InkWell(
                       child: _unselected("我的信息"),
                       onTap: () {
-                        c.isSelectedMyInfo = true;
                         c.update(["pageSelect"]);
+                        selectId = 0;
+                        _pageSelected();
                       },
                     )),
                 Expanded(
@@ -182,16 +184,36 @@ class MinePage extends BaseUiPage<MineC> {
     );
   }
 
+  final pageController = PageController(initialPage: 0);
+  var selectId = 0;
+
   Widget _childPage() {
-    return GetBuilder<MineC>(
-        id: "pageSelect",
-        builder: (c) {
-          if (c.isSelectedMyInfo) {
-            return MineInfo();
-          } else {
-            return MineStory();
-          }
-        });
+    return PageView(
+      controller: pageController,
+      onPageChanged: (index) {
+        selectId = index;
+        controller.update(['title']);
+      },
+      children: [MineInfo(), MineStory()],
+    );
+    //
+    // GetBuilder<MineC>(
+    //     id: "pageSelect",
+    //     builder: (c) {
+    //       if (c.isSelectedMyInfo) {
+    //         return MineInfo();
+    //       } else {
+    //         return MineStory();
+    //       }
+    //     });
+  }
+
+  void _pageSelected(){
+
+    pageController.animateTo(
+        MediaQuery.of(mContext).size.width * selectId,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.linear);
   }
 
   @override
@@ -205,7 +227,8 @@ class MinePage extends BaseUiPage<MineC> {
 
 class MineC extends BaseController {
   var headerImgUrl = "";
-  var isSelectedMyInfo = true;
+  var isShowWomanInfo = true;
+  var isShowManInfo = true;
   UserDataRes? mineInfo;
 
   @override
@@ -237,7 +260,5 @@ class MineC extends BaseController {
     update(['head']);
   }
 
-  void _setMine(){
-
-  }
+  void _setMine() {}
 }

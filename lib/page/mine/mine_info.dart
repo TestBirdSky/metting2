@@ -100,9 +100,9 @@ class MineInfo extends GetView<MineC> {
                               builder: (c) {
                                 return CupertinoSwitch(
                                     activeColor: C.FEC693,
-                                    value: c.isSelectedMyInfo,
+                                    value: c.isShowWomanInfo,
                                     onChanged: (onChanged) {
-                                      c.isSelectedMyInfo = onChanged;
+                                      c.isShowWomanInfo = onChanged;
                                       c.update(["mine_info"]);
                                     });
                               })
@@ -132,9 +132,9 @@ class MineInfo extends GetView<MineC> {
                               builder: (c) {
                                 return CupertinoSwitch(
                                     activeColor: C.FEC693,
-                                    value: c.isSelectedMyInfo,
+                                    value: c.isShowManInfo,
                                     onChanged: (onChanged) {
-                                      c.isSelectedMyInfo = onChanged;
+                                      c.isShowManInfo = onChanged;
                                       c.update(["mine_info"]);
                                     });
                               })

@@ -87,6 +87,24 @@ Future<BasePageData> setMessageNotificationStatus(bool isOpen) async {
   return await mineSetting({'messages_receiving': enable});
 }
 
+Future<BasePageData> setShowWomanInfo(bool isOpen) async {
+  final enable = isOpen ? 1 : 0;
+  return await mineSetting({'show_sex1': enable});
+}
+
+Future<BasePageData> setShowManInfo(bool isOpen) async {
+  final enable = isOpen ? 1 : 0;
+  return await mineSetting({'show_sex2': enable});
+}
+
+Future<BasePageData> setVideoCall(int money) async {
+  return await mineSetting({'video_call': money});
+}
+
+Future<BasePageData> setVoiceCall(int money) async {
+  return await mineSetting({'voice_call': money});
+}
+
 //     * index/User/userSetup
 //      * 请求信息
 //      * 必要条件字段
@@ -121,7 +139,7 @@ Future<BasePageData> delMineAccount() async {
   }
 }
 
-Future<BasePageData> addAudTrends(String content, int second) async {
+Future<BasePageData> addVoiceTrends(String content, int second) async {
   try {
     Response response = await getDio().post('index/Trends/addTrends',
         data: _addCommonInfo({"content": content, "type": 2, "mt": second}));
@@ -266,6 +284,7 @@ Future<BasePageData<ListNoteDetail?>> getNoteDetails(int uid, int page) async {
   }
 }
 
+//获取所有用户的日记
 Future<BasePageData<ListUserNotesBean?>> getMemoryList(int page) async {
   try {
     Response response = await getDio()

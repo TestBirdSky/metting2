@@ -9,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/network/bean/login_response.dart';
 import 'package:metting/page/mian/main.dart';
+import 'package:metting/page/web_view.dart';
+import 'package:metting/tool/log.dart';
 import 'package:metting/widget/my_toast.dart';
 
 import '../../base/BaseController.dart';
@@ -307,11 +309,13 @@ class LoginPage extends BaseStatelessPage<LoginC> {
   }
 
   void _clickProtocol() {
+    Get.to(WebViewPage(title: '用户协议', url: 'http://www.sancun.vip/yhxy'));
     // Get.toNamed(webViewPName,
     //     arguments: {'url': 'http://www.sancun.vip/yhxy', 'title': '用户协议'});
   }
 
   void _clickPrivacy() {
+    Get.to(WebViewPage(title: '隐私声明', url: 'http://www.sancun.vip/ysxy'));
     // Get.toNamed(webViewPName,
     //     arguments: {'url': 'http://www.sancun.vip/ysxy', 'title': '隐私声明'});
   }
@@ -364,8 +368,7 @@ class LoginC extends BaseController {
     if (res.sex == 0) {
       Get.off(BasicInfoPage());
     } else {
-      // Get.off(MainPage());
-      Get.off(BasicInfoPage());
+      Get.off(MainPage());
     }
   }
 }
