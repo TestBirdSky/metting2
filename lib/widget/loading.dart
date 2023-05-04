@@ -7,6 +7,10 @@ class LoadingUtils {
     return EasyLoading.show(status: msg);
   }
 
+  static Future<void> showSaveLoading() {
+    return EasyLoading.show(status: '保存中...');
+  }
+
   static Future<void> dismiss() {
     return EasyLoading.dismiss();
   }

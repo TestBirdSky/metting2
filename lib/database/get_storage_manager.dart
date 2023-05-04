@@ -17,6 +17,14 @@ Future<void> saveMineUid(int? uid) {
   return _firstInitStorage.write('uid', uid);
 }
 
+String getLastLoginAccount() {
+  return _firstInitStorage.read('accountLast') ?? '';
+}
+
+Future<void> saveLoginAccount(String account) {
+  return _firstInitStorage.write('accountLast', account);
+}
+
 ///保存某个人的基本信息数据
 Future<void> saveUserBasic(UserDataRes userBasic) {
   return _commonStorage.write('${userBasic.uid}', userBasic);
@@ -27,6 +35,16 @@ UserDataRes? getUserBasic(int uid) {
   final userBasicMap = _commonStorage.read('$uid');
   try {
     logger.i(userBasicMap);
+    return userBasicMap;
+  } catch (e) {
+    logger.e(e);
+    return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
+  }
+}
+///获取某个人的基本信息数据
+UserDataRes? getMineUserBasic() {
+  final userBasicMap = _commonStorage.read('${getMineUID()}');
+  try {
     return userBasicMap;
   } catch (e) {
     logger.e(e);

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../base/BaseController.dart';
 import '../../base/BaseUiPage.dart';
-import '../../tool/log.dart';
 
 class MessagePage extends BaseUiPage<MessagePageC> {
   MessagePage() : super(title: "消息");

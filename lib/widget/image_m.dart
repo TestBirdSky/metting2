@@ -15,7 +15,7 @@ Widget cardNetworkImage(String url, double widget, double height,
         RoundedRectangleBorder(
             borderRadius: BorderRadiusDirectional.circular(radius ?? 4.w)),
     clipBehavior: Clip.antiAlias,
-    color: Colors.grey,
+    color: Colors.white,
     child: SizedBox(
         width: widget,
         height: height,
@@ -24,7 +24,7 @@ Widget cardNetworkImage(String url, double widget, double height,
           imageUrl: url,
           errorWidget: (context, url, error) => errorWidget??
               Image.asset(
-                'assets/images/image_load_failed.png',
+                'assets/images/ic_default_icon2.png',
               ),
         )),
   );

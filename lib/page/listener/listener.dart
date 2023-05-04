@@ -38,9 +38,15 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
     controller._refresh(refreshController);
   }
 
+  @override
+  void onInit() {
+    _onRefresh();
+  }
+
   //
   // @override
-  RefreshController refreshController = RefreshController(initialRefresh: true);
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   Widget createBody(BuildContext context) {
@@ -123,7 +129,6 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
           child: InkWell(
             onTap: () {
               controller.choiceTopic(bean);
-
               _onRefresh();
             },
             child: Container(

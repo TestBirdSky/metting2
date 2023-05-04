@@ -18,10 +18,15 @@ abstract class BaseStatelessPage<T> extends StatelessWidget {
     return null;
   }
 
+  void onInit(){
+
+  }
+
   @override
   Widget build(BuildContext context) {
     controller = Get.put(initController());
     mContext = context;
+    onInit();
     return _createWidget(context);
   }
 

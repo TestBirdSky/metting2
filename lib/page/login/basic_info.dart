@@ -433,7 +433,6 @@ class BaseInfoC extends BaseController {
 
   void refreshNickName() async {
     final data = await getRandName();
-    logger.i('refreshNickName $data --> ${data.data}');
     if (data.isOk()) {
       nickName = data.data ?? "";
       logger.i('refreshNickName $nickName');

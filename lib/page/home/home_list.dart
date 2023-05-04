@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/page/home/home.dart';
 import 'package:metting/tool/log.dart';
+import 'package:metting/tool/view_tools.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../base/base_refresh_page.dart';
 import '../../core/common_configure.dart';
@@ -11,8 +13,7 @@ import '../../network/bean/front_response.dart';
 import '../../widget/image_m.dart';
 
 class HomeList extends GetView<HomeC> {
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: true);
 
   void _onLoading() {
     logger.i("onLoading");
@@ -28,20 +29,24 @@ class HomeList extends GetView<HomeC> {
   Widget build(BuildContext context) {
     return Container(
         color: C.PAGE_THEME_BG,
-        padding: EdgeInsets.only(left: 12.w, right: 12.w, top: 50.h),
-        child: RefreshConfiguration(
-            // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
-            hideFooterWhenNotFull: true,
-            child: SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: true,
-                header: MyClassicHeader(),
-                footer: MyClassicFooter(),
-                // 配置默认底部指示器
-                controller: refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                child: ListView(children: _list()))));
+        padding: EdgeInsets.only(top: 0.h),
+        child: GetBuilder<HomeC>(
+            id: "list",
+            builder: (c) {
+              return RefreshConfiguration(
+                  // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
+                  hideFooterWhenNotFull: true,
+                  child: SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      header: MyClassicHeader(),
+                      footer: MyClassicFooter(),
+                      // 配置默认底部指示器
+                      controller: refreshController,
+                      onRefresh: _onRefresh,
+                      onLoading: _onLoading,
+                      child: ListView(children: _list())));
+            }));
   }
 
   List<Widget> _list() {
@@ -55,7 +60,6 @@ class HomeList extends GetView<HomeC> {
         list.add(_pageViewLeft(info, content));
       }
     }
-
     list.add(SizedBox(
       height: 60.h,
     ));
@@ -111,26 +115,110 @@ class HomeList extends GetView<HomeC> {
   }
 
   Widget _itemInfo(FrontResponse bean) {
-    return Container(
-      height: itemHeight,
-      decoration: BoxDecoration(
-          color: Color(0xffFDFCDD),
-          borderRadius: BorderRadius.all(Radius.circular(5.w))),
-      child: Row(children: [
-        cardNetworkImage(bean.avatar ?? "", 96.w, 96.w),
-        Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  '${bean.cname}',
-                  style: TextStyle(color: Color(0xff333333), fontSize: 12.sp),
-                )
-              ],
+    return Stack(
+      children: [
+        Container(
+          height: itemHeight,
+          decoration: BoxDecoration(
+              color: Color(0xffFDFCDD),
+              borderRadius: BorderRadius.all(Radius.circular(5.w))),
+          child: Row(children: [
+            cardNetworkImage(bean.avatar ?? "", itemHeight, itemHeight,
+                margin: const EdgeInsets.all(0)),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '${bean.cname}',
+                        style: TextStyle(
+                            color: Color(0xff333333), fontSize: 12.sp),
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Text(
+                        '${bean.age}岁',
+                        style: TextStyle(
+                            color: Color(0xff333333), fontSize: 10.sp),
+                      ),
+                      Image.asset(
+                        getImagePath(
+                            bean.sex == 1 ? 'ic_sex_man' : 'ic_sex_woman'),
+                        width: 10.w,
+                        height: 10.w,
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: _widgetDialect(bean.lang ?? [])),
+                  const Expanded(child: SizedBox()),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          getImagePath('ic_location'),
+                          width: 12.w,
+                          height: 19.w,
+                        ),
+                        SizedBox(
+                          width: 7.w,
+                        ),
+                        Text('${bean.province}${bean.region}')
+                      ],
+                    ),
+                  )
+                ],
+              ),
             )
-          ],
-        )
-      ]),
+          ]),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: GestureDetector(
+              child: Image.asset(
+                getImagePath('mine_phone'),
+                width: 31.w,
+                height: 31.w,
+              ),
+              onTap: () {},
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _widgetDialect(List<String> dialectList) {
+    if (dialectList.isEmpty) return const SizedBox();
+    final list = <Widget>[];
+    for (int i = 0; i < 4 && i < dialectList.length; i++) {
+      final element = dialectList[i];
+      list.add(Container(
+        decoration: BoxDecoration(
+            color: Color(0xFFFEC693),
+            borderRadius: BorderRadius.all(Radius.circular(2.w))),
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
+        child: Text(element,
+            style: TextStyle(
+                fontSize: 10.sp,
+                color: Colors.black,
+                decoration: TextDecoration.none)),
+      ));
+    }
+    return Wrap(
+      spacing: 4.w,
+      children: list,
     );
   }
 }

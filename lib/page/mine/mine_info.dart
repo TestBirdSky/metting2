@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:metting/page/mine/edit_info.dart';
 import 'package:metting/page/mine/setting.dart';
 import 'package:metting/tool/view_tools.dart';
+import 'package:metting/widget/loading.dart';
 
 import '../../core/common_configure.dart';
+import '../../network/http_helper.dart';
 import 'mine.dart';
 
 class MineInfo extends GetView<MineC> {
@@ -101,16 +103,13 @@ class MineInfo extends GetView<MineC> {
                                 return CupertinoSwitch(
                                     activeColor: C.FEC693,
                                     value: c.isShowWomanInfo,
-                                    onChanged: (onChanged) {
-                                      c.isShowWomanInfo = onChanged;
-                                      c.update(["mine_info"]);
+                                    onChanged: (onChanged) async {
+                                      controller.setWoman(onChanged);
                                     });
                               })
                         ],
                       ),
-                      () {
-
-                      }),
+                      () {}),
                   _item2(
                       Row(
                         children: [
@@ -134,8 +133,7 @@ class MineInfo extends GetView<MineC> {
                                     activeColor: C.FEC693,
                                     value: c.isShowManInfo,
                                     onChanged: (onChanged) {
-                                      c.isShowManInfo = onChanged;
-                                      c.update(["mine_info"]);
+                                      controller.setMan(onChanged);
                                     });
                               })
                         ],

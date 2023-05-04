@@ -7,11 +7,11 @@ abstract class BaseRefreshPage<T> extends BaseUiPage<T> {
 
   RefreshController refreshController();
 
-  late RefreshController refreshC;
+  late RefreshController mRefreshController;
 
   @override
   Widget createBody(BuildContext context) {
-    refreshC = refreshController();
+    mRefreshController = refreshController();
     return RefreshConfiguration(
       // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
       hideFooterWhenNotFull: true,
@@ -21,9 +21,9 @@ abstract class BaseRefreshPage<T> extends BaseUiPage<T> {
         header: const MyClassicHeader(),
         footer: const MyClassicFooter(),
         // 配置默认底部指示器
-        controller: refreshC,
+        controller: mRefreshController,
         onRefresh: onRefresh,
-        onLoading: onLoading,
+        onLoading: onLoad,
         child: refreshLayout(),
       ),
     );
@@ -31,7 +31,7 @@ abstract class BaseRefreshPage<T> extends BaseUiPage<T> {
 
   Widget refreshLayout();
 
-  void onLoading() {}
+  void onLoad() {}
 
   void onRefresh() {}
 }

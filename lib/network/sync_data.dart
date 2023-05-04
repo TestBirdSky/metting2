@@ -5,6 +5,7 @@ import 'package:metting/network/bean/listener.dart';
 
 import '../tool/log.dart';
 import 'base_data.dart';
+import 'bean/all_user_notes.dart';
 import 'bean/chat_lang.dart';
 import 'bean/file_response.dart';
 import 'bean/front_response.dart';
@@ -12,6 +13,7 @@ import 'bean/login_response.dart';
 import 'bean/note_details.dart';
 import 'bean/random_nickname.dart';
 import 'bean/topic_list_res.dart';
+import 'bean/tread_list.dart';
 import 'bean/user_data_res.dart';
 
 final errorBasePageData = BasePageData(errorCodeNetworkError, '网络异常', null);
@@ -42,6 +44,10 @@ BasePageData<T> syncData<T>(Response response) {
         data = ListNoteDetail.fromJson(respData.data) as T;
       } else if (k == "RandomNickname") {
         data = RandomNickname.fromJson(respData.data) as T;
+      }  else if (k == "TreadList") {
+        data = TreadList.fromJson(respData.data) as T;
+      } else if (k == "ListUserNotesBean") {
+        data = ListUserNotesBean.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type${response.data}');
         data = response.data;

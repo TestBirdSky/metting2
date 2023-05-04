@@ -12,6 +12,7 @@ import 'package:metting/widget/image_m.dart';
 
 import '../../network/http_helper.dart';
 import '../../tool/view_tools.dart';
+import '../../widget/loading.dart';
 import 'mine_story.dart';
 
 class MinePage extends BaseUiPage<MineC> {
@@ -68,7 +69,9 @@ class MinePage extends BaseUiPage<MineC> {
                     id: 'head',
                     builder: (c) {
                       return GestureDetector(
-                        onTap: showInfoDialog,
+                        onTap: () {
+                          showInfoDialog(controller.mineInfo!);
+                        },
                         child:
                             circleNetworkWidget(c.headerImgUrl, 115.w, 115.w),
                       );
@@ -111,13 +114,13 @@ class MinePage extends BaseUiPage<MineC> {
       margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-          color: Color(0xFFF7BB76),
+          color: const Color(0xFFF7BB76),
           border: Border.all(color: Color(0xFFF13181E), width: 2.w),
-          borderRadius: BorderRadius.all(Radius.circular(30.w))),
+          borderRadius: BorderRadius.all(Radius.circular(36.w))),
       child: GetBuilder<MineC>(
-        id: "pageSelect",
+        id: "title",
         builder: (c) {
-          if (selectId==0) {
+          if (selectId == 0) {
             return Row(
               children: [
                 Expanded(
@@ -131,7 +134,6 @@ class MinePage extends BaseUiPage<MineC> {
                       onTap: () {
                         selectId = 1;
                         _pageSelected();
-                        c.update(["pageSelect"]);
                       },
                     )),
               ],
@@ -144,7 +146,6 @@ class MinePage extends BaseUiPage<MineC> {
                     child: InkWell(
                       child: _unselected("我的信息"),
                       onTap: () {
-                        c.update(["pageSelect"]);
                         selectId = 0;
                         _pageSelected();
                       },
@@ -166,8 +167,8 @@ class MinePage extends BaseUiPage<MineC> {
         height: 60.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            color: Color(0xFF13181E),
-            border: Border.all(color: Color(0xffFDFCDD), width: 1.w),
+            color: const Color(0xFF13181E),
+            border: Border.all(color: const Color(0xffFDFCDD), width: 1.w),
             borderRadius: BorderRadius.all(Radius.circular(30.w))),
         child: Text(
           name,
@@ -188,32 +189,22 @@ class MinePage extends BaseUiPage<MineC> {
   var selectId = 0;
 
   Widget _childPage() {
-    return PageView(
-      controller: pageController,
-      onPageChanged: (index) {
-        selectId = index;
-        controller.update(['title']);
-      },
-      children: [MineInfo(), MineStory()],
+    return SizedBox(
+      height: 460.h,
+      child: PageView(
+        controller: pageController,
+        onPageChanged: (index) {
+          selectId = index;
+          controller.update(['title']);
+        },
+        children: [MineInfo(), MineStory()],
+      ),
     );
-    //
-    // GetBuilder<MineC>(
-    //     id: "pageSelect",
-    //     builder: (c) {
-    //       if (c.isSelectedMyInfo) {
-    //         return MineInfo();
-    //       } else {
-    //         return MineStory();
-    //       }
-    //     });
   }
 
-  void _pageSelected(){
-
-    pageController.animateTo(
-        MediaQuery.of(mContext).size.width * selectId,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear);
+  void _pageSelected() {
+    pageController.animateTo(MediaQuery.of(mContext).size.width * selectId,
+        duration: const Duration(milliseconds: 100), curve: Curves.linear);
   }
 
   @override
@@ -260,5 +251,28 @@ class MineC extends BaseController {
     update(['head']);
   }
 
-  void _setMine() {}
+  void setWoman(bool isOpen) async {
+    LoadingUtils.showSaveLoading();
+    final data = await setShowWomanInfo(isOpen);
+    if (data.isOk()) {
+      isShowWomanInfo = isOpen;
+    } else {
+      isShowWomanInfo = !isOpen;
+    }
+    update(["mine_info"]);
+    LoadingUtils.dismiss();
+  }
+
+
+  void setMan(bool isOpen) async {
+    LoadingUtils.showSaveLoading();
+    final data = await setShowManInfo(isOpen);
+    if (data.isOk()) {
+      isShowManInfo = isOpen;
+    } else {
+      isShowManInfo = !isOpen;
+    }
+    update(["mine_info"]);
+    LoadingUtils.dismiss();
+  }
 }

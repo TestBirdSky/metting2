@@ -1,9 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -62,6 +59,7 @@ class FeedbackPage extends BaseUiPage<FeedbackC> {
         color: C.whiteFFFFFF,
       ),
       maxLength: 400,
+      maxLines: null,
       decoration: InputDecoration(
         filled: false,
         contentPadding: EdgeInsets.symmetric(vertical: 4.0),

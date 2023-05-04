@@ -16,21 +16,22 @@
 
 class UserDataRes {
   UserDataRes({
-      num? uid, 
-      String? cname, 
-      String? avatar, 
-      String? birthday, 
-      num? sex, 
-      String? region, 
-      num? age, 
-      num? svip, 
-      String? constellation, 
-      num? videoCall, 
-      num? voiceCall, 
-      List<String>? lang, 
-      List<String>? comment, 
-      List<String>? chatContent, 
-      num? isAnchor,}){
+    num? uid,
+    String? cname,
+    String? avatar,
+    String? birthday,
+    num? sex,
+    String? region,
+    num? age,
+    num? svip,
+    String? constellation,
+    num? videoCall,
+    num? voiceCall,
+    List<String>? lang,
+    List<String>? comment,
+    List<String>? chatContent,
+    num? isAnchor,
+  }) {
     _uid = uid;
     _cname = cname;
     _avatar = avatar;
@@ -46,7 +47,7 @@ class UserDataRes {
     _comment = comment;
     _chatContent = chatContent;
     _isAnchor = isAnchor;
-}
+  }
 
   UserDataRes.fromJson(dynamic json) {
     _uid = json['uid'];
@@ -62,9 +63,11 @@ class UserDataRes {
     _voiceCall = json['voice_call'];
     _lang = json['lang'] != null ? json['lang'].cast<String>() : [];
     _comment = json['comment'] != null ? json['comment'].cast<String>() : [];
-    _chatContent = json['chat_content'] != null ? json['chat_content'].cast<String>() : [];
+    _chatContent =
+        json['chat_content'] != null ? json['chat_content'].cast<String>() : [];
     _isAnchor = json['isAnchor'];
   }
+
   num? _uid;
   String? _cname;
   String? _avatar;
@@ -80,52 +83,73 @@ class UserDataRes {
   List<String>? _comment;
   List<String>? _chatContent;
   num? _isAnchor;
-UserDataRes copyWith({  num? uid,
-  String? cname,
-  String? avatar,
-  String? birthday,
-  num? sex,
-  String? region,
-  num? age,
-  num? svip,
-  String? constellation,
-  num? videoCall,
-  num? voiceCall,
-  List<String>? lang,
-  List<String>? comment,
-  List<String>? chatContent,
-  num? isAnchor,
-}) => UserDataRes(  uid: uid ?? _uid,
-  cname: cname ?? _cname,
-  avatar: avatar ?? _avatar,
-  birthday: birthday ?? _birthday,
-  sex: sex ?? _sex,
-  region: region ?? _region,
-  age: age ?? _age,
-  svip: svip ?? _svip,
-  constellation: constellation ?? _constellation,
-  videoCall: videoCall ?? _videoCall,
-  voiceCall: voiceCall ?? _voiceCall,
-  lang: lang ?? _lang,
-  comment: comment ?? _comment,
-  chatContent: chatContent ?? _chatContent,
-  isAnchor: isAnchor ?? _isAnchor,
-);
+
+  UserDataRes copyWith({
+    num? uid,
+    String? cname,
+    String? avatar,
+    String? birthday,
+    num? sex,
+    String? region,
+    num? age,
+    num? svip,
+    String? constellation,
+    num? videoCall,
+    num? voiceCall,
+    List<String>? lang,
+    List<String>? comment,
+    List<String>? chatContent,
+    num? isAnchor,
+  }) =>
+      UserDataRes(
+        uid: uid ?? _uid,
+        cname: cname ?? _cname,
+        avatar: avatar ?? _avatar,
+        birthday: birthday ?? _birthday,
+        sex: sex ?? _sex,
+        region: region ?? _region,
+        age: age ?? _age,
+        svip: svip ?? _svip,
+        constellation: constellation ?? _constellation,
+        videoCall: videoCall ?? _videoCall,
+        voiceCall: voiceCall ?? _voiceCall,
+        lang: lang ?? _lang,
+        comment: comment ?? _comment,
+        chatContent: chatContent ?? _chatContent,
+        isAnchor: isAnchor ?? _isAnchor,
+      );
+
   num? get uid => _uid;
+
   String? get cname => _cname;
+
   String? get avatar => _avatar;
+
   String? get birthday => _birthday;
+
   num? get sex => _sex;
+
   String? get region => _region;
+
   num? get age => _age;
+
   num? get svip => _svip;
+
   String? get constellation => _constellation;
+
   num? get videoCall => _videoCall;
+
   num? get voiceCall => _voiceCall;
+
   List<String>? get lang => _lang;
+
   List<String>? get comment => _comment;
+
   List<String>? get chatContent => _chatContent;
+
   num? get isAnchor => _isAnchor;
+
+  String get sexStr => sex==1?"男" : "女";
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -146,5 +170,4 @@ UserDataRes copyWith({  num? uid,
     map['isAnchor'] = _isAnchor;
     return map;
   }
-
 }

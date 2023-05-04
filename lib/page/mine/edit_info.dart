@@ -47,7 +47,7 @@ class EditInfoPage extends BaseUiPage<EditInfoC> {
                   child: GetBuilder<EditInfoC>(
                       id: 'head',
                       builder: (c) {
-                        return circleNetworkWidget(
+                        return circleNetworkWidget2(
                             c.headerImgUrl, 123.w, 123.w);
                       }),
                 ),
@@ -98,7 +98,7 @@ class EditInfoPage extends BaseUiPage<EditInfoC> {
                   child: textFieldNick(),
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                 )),
-                InkWell(
+                GestureDetector(
                   child: Image.asset(
                     getImagePath('ic_refresh'),
                   ),
@@ -148,7 +148,8 @@ class EditInfoPage extends BaseUiPage<EditInfoC> {
     return GetBuilder<EditInfoC>(
         id: 'page',
         builder: (c) {
-          final name = c.mineInfo?.cname ?? "";
+          final name =
+              c.nickName.isEmpty ? c.mineInfo?.cname ?? "" : c.nickName;
           _controllerInput.text = name;
           return TextField(
             style: TextStyle(
@@ -341,10 +342,11 @@ class EditInfoC extends BaseController {
   String headerImgUrl = "";
   String? localImgUrl;
   String birthday = "";
+  String nickName = "";
   var language = <String>[];
   var selectLanguage = <String>[];
   var selected = DateTime(2000, 1, 1);
-  UserDataRes? mineInfo;
+  UserDataRes? mineInfo = getMineUserBasic();
 
   Future<void> finish(String nickName) async {
     if (localImgUrl != null) {
@@ -374,15 +376,21 @@ class EditInfoC extends BaseController {
   }
 
   bool isMan() {
-    return false;
+    return mineInfo?.sex == 1;
   }
 
-  void refreshNickName() {}
+  void refreshNickName() async {
+    final data = await getRandName();
+    if (data.isOk()) {
+      nickName = data.data ?? "";
+      update(['page']);
+    }
+  }
 
   void setBirthday(DateTime day) {
     selected = day;
     birthday = "${selected.year}年${selected.month}月${selected.day}日";
-    update(['bir']);
+    update(['page']);
   }
 
   String _getBirthday() {

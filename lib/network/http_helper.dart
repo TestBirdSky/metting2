@@ -3,6 +3,7 @@ import 'package:metting/network/base_data.dart';
 import 'package:metting/network/bean/listener.dart';
 import 'package:metting/network/bean/login_response.dart';
 import 'package:metting/network/bean/note_details.dart';
+import 'package:metting/network/bean/tread_list.dart';
 import 'package:metting/network/bean/user_data_res.dart';
 import 'package:metting/tool/log.dart';
 
@@ -131,6 +132,18 @@ Future<BasePageData> delMineAccount() async {
   try {
     Response response = await getDio()
         .post('index/share/delUserData', data: _addCommonInfo({}));
+    logger.i("$response---${response.data}}");
+    return syncData(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData<TreadList?>> getTreadList(int page) async{
+  try {
+    Response response = await getDio().post('  index/Trends/trendsList',
+        data: _addCommonInfo({"page": page}));
     logger.i("$response---${response.data}}");
     return syncData(response);
   } catch (e) {

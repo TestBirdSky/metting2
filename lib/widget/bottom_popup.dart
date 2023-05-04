@@ -102,7 +102,8 @@ void showBottomChoice(
   String action2Str = "语音通话(50金币/分钟)",
 }) {
   final textStyle = TextStyle(fontSize: 16.sp, color: const Color(0xff666666));
-  Get.dialog(Container(
+  Get.dialog(
+      Container(
       alignment: Alignment.bottomCenter,
       child:
           Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
@@ -155,5 +156,5 @@ void showBottomChoice(
                       padding: EdgeInsets.symmetric(vertical: 8.h),
                       textStyle: textStyle)),
             ]))
-      ])));
+      ])),useSafeArea: false);
 }

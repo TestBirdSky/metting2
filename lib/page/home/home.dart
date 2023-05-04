@@ -166,7 +166,7 @@ class HomeC extends BaseController {
   final List<FrontResponse> list = [];
 
   bool isBoy(FrontResponse bean) {
-    return bean.sex==1;
+    return bean.sex == 1;
   }
 
   int page = 1;
@@ -175,13 +175,15 @@ class HomeC extends BaseController {
     page = 1;
     final base = await getFrontPage(page);
     if (base.isOk()) {
-      final list = base.data?.data;
-      if (list != null) {
-        list.addAll(list);
+      final resList = base.data?.data;
+      if (resList != null) {
+        list.addAll(resList);
+        page++;
+        c.refreshCompleted();
+        update(['list']);
+      } else {
+        c.resetNoData();
       }
-      page++;
-      c.resetNoData();
-      c.refreshCompleted();
     } else {
       c.refreshFailed();
     }
@@ -195,6 +197,7 @@ class HomeC extends BaseController {
         list.addAll(list);
         page++;
         c.refreshCompleted();
+        update(['list']);
       } else {
         c.loadNoData();
       }

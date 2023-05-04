@@ -16,6 +16,7 @@ import 'package:metting/widget/my_toast.dart';
 import '../../base/BaseController.dart';
 import '../../base/BaseStatelessPage.dart';
 import '../../core/common_configure.dart';
+import '../../database/get_storage_manager.dart';
 import '../../network/http_helper.dart';
 import '../../tool/input_filter.dart';
 import '../../tool/view_tools.dart';
@@ -23,7 +24,8 @@ import '../../widget/ClickSpecifiedStringText.dart';
 import 'basic_info.dart';
 
 class LoginPage extends BaseStatelessPage<LoginC> {
-  final TextEditingController _controllerPhone = TextEditingController();
+  final TextEditingController _controllerPhone =
+      TextEditingController(text: getLastLoginAccount());
   final TextEditingController _controllerCode = TextEditingController();
 
   @override
@@ -356,6 +358,7 @@ class LoginC extends BaseController {
     final res = await loginPhone(phone, code);
     if (res.isOk() && res.data != null) {
       _next(res.data!);
+      saveLoginAccount(phone);
     } else {
       MyToast.show(res.msg);
     }
