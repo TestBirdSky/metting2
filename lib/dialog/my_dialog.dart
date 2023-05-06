@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-Future<int?> showVoice(List<int> listMoney) {
-  return _showDialogChoiceLevel(listMoney).then<int?>((value) =>(){
-
-  });
+Future<int?> showVoice() {
+  List<int> listMoney = [];
+  for (int i = 10; i < 100; i += 10) {
+    listMoney.add(i);
+  }
+  return _showDialogChoiceLevel(listMoney)
+      .then((value) => value == null ? value : listMoney[value]);
 }
 
 Future<int?> _showDialogChoiceLevel(List<int> listMoney) {
