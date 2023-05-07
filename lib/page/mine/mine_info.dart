@@ -5,15 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:metting/page/mine/edit_info.dart';
 import 'package:metting/page/mine/setting.dart';
 import 'package:metting/tool/view_tools.dart';
-import 'package:metting/widget/loading.dart';
 
 import '../../core/common_configure.dart';
-import '../../network/http_helper.dart';
+import '../../dialog/my_dialog.dart';
+import 'bug_vip.dart';
 import 'mine.dart';
 
-class MineInfo extends GetView<MineC> {
-  @override
-  String? get tag => "MineC";
+class MineInfo extends StatelessWidget {
+  MineInfo(this.controller);
+
+  late MineC controller;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,9 @@ class MineInfo extends GetView<MineC> {
                 children: [
                   _item1('mine_wallet', '我的钱包', () {}),
                   _item1('mine_listener_p', '倾听者', () {}),
-                  _item1('mine_vip', '我的会员', () {}),
+                  _item1('mine_vip', '我的会员', () {
+                    Get.to(() => BuyVipPage());
+                  }),
                   _item1('mine_edit_info', '编辑资料', () {
                     Get.to(EditInfoPage());
                   }),
@@ -155,16 +158,26 @@ class MineInfo extends GetView<MineC> {
                                 TextStyle(color: Colors.white, fontSize: 15.sp),
                           ),
                           Expanded(
-                            child: Text(
-                              '60金币/分钟',
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 15.sp),
-                            ),
+                            child: GetBuilder<MineC>(
+                                id: 'price',
+                                builder: (context) {
+                                  return Text(
+                                    '${controller.videoPrice}金币/分钟',
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15.sp),
+                                  );
+                                }),
                           ),
                         ],
-                      ),
-                      () {}),
+                      ), () {
+                    showVideoPriceDialog(price: controller.videoPrice)
+                        .then((value) {
+                      if (value != null) {
+                        controller.setVideo(value);
+                      }
+                    });
+                  }),
                   _item2(
                       Row(
                         children: [
@@ -181,16 +194,26 @@ class MineInfo extends GetView<MineC> {
                                 TextStyle(color: Colors.white, fontSize: 15.sp),
                           ),
                           Expanded(
-                            child: Text(
-                              '60金币/分钟',
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 15.sp),
-                            ),
+                            child: GetBuilder<MineC>(
+                                id: 'price',
+                                builder: (context) {
+                                  return Text(
+                                    '${controller.voicePrice}金币/分钟',
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15.sp),
+                                  );
+                                }),
                           ),
                         ],
-                      ),
-                      () {}),
+                      ), () {
+                    showVideoPriceDialog(price: controller.voicePrice)
+                        .then((value) {
+                      if (value != null) {
+                        controller.setVoice(value);
+                      }
+                    });
+                  }),
                   _item2(
                       Row(
                         children: [

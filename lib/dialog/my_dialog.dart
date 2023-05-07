@@ -2,34 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-Future<int?> showVoice() {
+Future<int?> showVideoPriceDialog({int price = 40}) {
   List<int> listMoney = [];
-  for (int i = 10; i < 100; i += 10) {
+  int index = 2;
+  for (int i = 20; i <= 100; i += 10) {
     listMoney.add(i);
+    if (price == i) {
+      index = listMoney.length - 1;
+    }
   }
-  return _showDialogChoiceLevel(listMoney)
+  return _showDialogChoicePrice(listMoney, index)
       .then((value) => value == null ? value : listMoney[value]);
 }
 
-Future<int?> _showDialogChoiceLevel(List<int> listMoney) {
+Future<int?> showVoicePriceDialog({int price = 30}) {
+  List<int> listMoney = [];
+  int index = 2;
+  for (int i = 10; i <= 80; i += 10) {
+    listMoney.add(i);
+    if (price == i) {
+      index = listMoney.length - 1;
+    }
+  }
+  return _showDialogChoicePrice(listMoney, index)
+      .then((value) => value == null ? value : listMoney[value]);
+}
+
+Future<int?> _showDialogChoicePrice(List<int> listMoney, int index) {
   final list = <Widget>[];
   for (int i = 0; i < listMoney.length; i++) {
     list.add(
       Container(
         height: 40.h,
-        child: Align(alignment: Alignment.center, child: Text('$i')),
+        child: Align(
+            alignment: Alignment.center, child: Text('${listMoney[i]}金币')),
       ),
     );
   }
+  return _showListWheelDialog(list, index, title: '选择价格');
+}
+
+Future<int?> showWaitTimeDialog(int time) {
+  final list = <Widget>[];
+  int index = 0;
+  final listInt = [1, 2, 4, 8, 12, 24, 48];
+  for (int i = 0; i < listInt.length; i++) {
+    final cur = listInt[i];
+    if (cur == time) index = i;
+    list.add(
+      Container(
+        height: 40.h,
+        child: Align(alignment: Alignment.center, child: Text('$cur小时')),
+      ),
+    );
+  }
+  return _showListWheelDialog(list, index)
+      .then((value) => value == null ? null : listInt[value]);
+}
+
+Future<int?> _showListWheelDialog(List<Widget> list, int index,
+    {String title = ''}) {
   FixedExtentScrollController hourScrollController =
-      FixedExtentScrollController(initialItem: 10);
+      FixedExtentScrollController(initialItem: index);
   return Get.dialog(
     barrierColor: Color(0x00000000),
     barrierDismissible: true,
+    useSafeArea: false,
     Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: 160.h,
+        height: 260.h,
+        color: Colors.grey.shade100,
         child: Column(
           children: [
             Container(
@@ -38,7 +81,7 @@ Future<int?> _showDialogChoiceLevel(List<int> listMoney) {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Row(
                   children: [
-                    GestureDetector(
+                    InkWell(
                       child: Text(
                         '取消',
                         style: TextStyle(color: Colors.black, fontSize: 16.sp),
@@ -48,11 +91,11 @@ Future<int?> _showDialogChoiceLevel(List<int> listMoney) {
                       },
                     ),
                     Expanded(
-                        child: Text('',
+                        child: Text(title,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black, fontSize: 18.sp))),
-                    GestureDetector(
+                    InkWell(
                       child: Text('确定',
                           style: TextStyle(
                               color: Color(0xffFEC693), fontSize: 16.sp)),
@@ -64,15 +107,17 @@ Future<int?> _showDialogChoiceLevel(List<int> listMoney) {
                 ),
               ),
             ),
+            SizedBox(
+              height: 20.h,
+            ),
             Container(
-              height: 120.h,
-              color: Colors.grey.shade100,
+              height: 150.h,
               child: Stack(
                 children: [
                   Align(
                     child: Container(
                       height: 40.h,
-                      color: Colors.grey,
+                      color: Color(0x18fec693),
                     ),
                   ),
                   ListWheelScrollView(

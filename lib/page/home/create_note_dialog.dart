@@ -47,7 +47,7 @@ Future<bool?> showCreateNoteDialog(BuildContext context) {
                 SizedBox(
                   height: 10.h,
                 ),
-                textButtonLogin(() async {
+                textButtonSure(() async {
                   final content = _controller.text;
                   if (content.isEmpty) return;
                   LoadingUtils.showLoading();
@@ -92,7 +92,7 @@ Widget textField(TextEditingController controller) {
   );
 }
 
-Widget textButtonLogin(VoidCallback? onPressed) {
+Widget textButtonSure(VoidCallback? onPressed) {
   return Container(
     height: 43.h,
     width: 500.w,

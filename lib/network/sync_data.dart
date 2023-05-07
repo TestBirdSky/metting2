@@ -6,12 +6,14 @@ import 'package:metting/network/bean/listener.dart';
 import '../tool/log.dart';
 import 'base_data.dart';
 import 'bean/all_user_notes.dart';
+import 'bean/balance_bean.dart';
 import 'bean/chat_lang.dart';
 import 'bean/file_response.dart';
 import 'bean/front_response.dart';
 import 'bean/login_response.dart';
 import 'bean/note_details.dart';
 import 'bean/random_nickname.dart';
+import 'bean/square.dart';
 import 'bean/topic_list_res.dart';
 import 'bean/tread_list.dart';
 import 'bean/user_data_res.dart';
@@ -38,16 +40,20 @@ BasePageData<T> syncData<T>(Response response) {
         data = ListenerList.fromJson(respData.data) as T;
       } else if (k == "FrontResponse") {
         data = FrontResponse.fromListJson(respData.data) as T;
-      } else if (k == "TopicBean") {
-        data = TopicBean.fromListJson(respData.data) as T;
+      } else if (k == "TopicRes") {
+        data = TopicRes.fromJson(respData.data) as T;
       } else if (k == "ListNoteDetail") {
         data = ListNoteDetail.fromJson(respData.data) as T;
       } else if (k == "RandomNickname") {
         data = RandomNickname.fromJson(respData.data) as T;
-      }  else if (k == "TreadList") {
+      } else if (k == "TreadList") {
         data = TreadList.fromJson(respData.data) as T;
       } else if (k == "ListUserNotesBean") {
         data = ListUserNotesBean.fromJson(respData.data) as T;
+      } else if (k == "SquareRes") {
+        data = SquareRes.fromJson(respData.data) as T;
+      } else if (k == "BalanceBean") {
+        data = BalanceBean.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type${response.data}');
         data = response.data;

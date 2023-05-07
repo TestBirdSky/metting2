@@ -9,6 +9,7 @@ import 'package:metting/network/bean/user_data_res.dart';
 import 'package:metting/page/mine/mine_info.dart';
 import 'package:metting/widget/dialog_person_info.dart';
 import 'package:metting/widget/image_m.dart';
+import 'package:metting/widget/my_toast.dart';
 
 import '../../network/http_helper.dart';
 import '../../tool/view_tools.dart';
@@ -197,7 +198,14 @@ class MinePage extends BaseUiPage<MineC> {
           selectId = index;
           controller.update(['title']);
         },
-        children: [MineInfo(), MineStory()],
+        children: [
+          GetBuilder<MineC>(
+              id: "mine_info",
+              builder: (c) {
+                return MineInfo(controller);
+              }),
+          MineStory()
+        ],
       ),
     );
   }
@@ -221,6 +229,8 @@ class MineC extends BaseController {
   var isShowWomanInfo = true;
   var isShowManInfo = true;
   UserDataRes? mineInfo;
+  var voicePrice = 50;
+  var videoPrice = 60;
 
   @override
   void onInit() {
@@ -243,12 +253,19 @@ class MineC extends BaseController {
         saveUserBasic(mineInfo!);
       }
       _updateInfo();
+      _updatePrice();
     }
   }
 
   void _updateInfo() {
     headerImgUrl = mineInfo?.avatar ?? "";
     update(['head']);
+  }
+
+  void _updatePrice() {
+    voicePrice = mineInfo?.voiceCall?.toInt() ?? 50;
+    videoPrice = mineInfo?.videoCall?.toInt() ?? 60;
+    update(['price']);
   }
 
   void setWoman(bool isOpen) async {
@@ -263,7 +280,6 @@ class MineC extends BaseController {
     LoadingUtils.dismiss();
   }
 
-
   void setMan(bool isOpen) async {
     LoadingUtils.showSaveLoading();
     final data = await setShowManInfo(isOpen);
@@ -273,6 +289,30 @@ class MineC extends BaseController {
       isShowManInfo = !isOpen;
     }
     update(["mine_info"]);
+    LoadingUtils.dismiss();
+  }
+
+  void setVoice(int price) async {
+    LoadingUtils.showSaveLoading();
+    final data = await setVoiceCall(price);
+    if (data.isOk()) {
+      voicePrice = price;
+      update(["price"]);
+    } else {
+      MyToast.show(data.msg);
+    }
+    LoadingUtils.dismiss();
+  }
+
+  void setVideo(int price) async {
+    LoadingUtils.showSaveLoading();
+    final data = await setVideoCall(price);
+    if (data.isOk()) {
+      videoPrice = price;
+      update(["price"]);
+    } else {
+      MyToast.show(data.msg);
+    }
     LoadingUtils.dismiss();
   }
 }

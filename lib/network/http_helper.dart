@@ -3,12 +3,14 @@ import 'package:metting/network/base_data.dart';
 import 'package:metting/network/bean/listener.dart';
 import 'package:metting/network/bean/login_response.dart';
 import 'package:metting/network/bean/note_details.dart';
+import 'package:metting/network/bean/square.dart';
 import 'package:metting/network/bean/tread_list.dart';
 import 'package:metting/network/bean/user_data_res.dart';
 import 'package:metting/tool/log.dart';
 
 import '../database/get_storage_manager.dart';
 import 'bean/all_user_notes.dart';
+import 'bean/balance_bean.dart';
 import 'bean/chat_lang.dart';
 import 'bean/create_record_response.dart';
 import 'bean/file_response.dart';
@@ -140,7 +142,7 @@ Future<BasePageData> delMineAccount() async {
   }
 }
 
-Future<BasePageData<TreadList?>> getTreadList(int page) async{
+Future<BasePageData<TreadList?>> getTreadList(int page) async {
   try {
     Response response = await getDio().post('  index/Trends/trendsList',
         data: _addCommonInfo({"page": page}));
@@ -229,11 +231,11 @@ Future<BasePageData<ListenerList?>> getListener(int page,
   }
 }
 
-Future<BasePageData<TopicBean?>> getTopicList() async {
+Future<BasePageData<TopicRes?>> getTopicList() async {
   try {
     Response response =
         await getDio().post('index/Trends/topicList', data: _addCommonInfo({}));
-    final data = syncData<TopicBean>(response);
+    final data = syncData<TopicRes>(response);
     return data;
   } catch (e) {
     logger.e("$e");
@@ -338,6 +340,48 @@ Future<BasePageData> addFeedback(String content, List<String> img) async {
         data: _addCommonInfo(
             {'content': content, 'img': urlOSS, 'userModel': 'iphone'}));
     return syncData(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData<SquareRes?>> getSquareList(int page) async {
+  try {
+    Response response = await getDio()
+        .post('index/Square/squareList', data: _addCommonInfo({"page": page}));
+    final data = syncData<SquareRes>(response);
+    return data;
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData> addSquare(List<String> topics, int type, int pirce, String des, int time) async {
+  try {
+    Response response = await getDio().post('index/Square/addSquare',
+        data: _addCommonInfo({
+          "topic": topics,
+          "type": type,
+          "price": pirce,
+          "describe": des,
+          "time": time
+        }));
+    final data = syncData(response);
+    return data;
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData<BalanceBean?>> getMyBalance()async{
+  try {
+    Response response = await getDio().post('index/Pay/getBalance',
+        data: _addCommonInfo({}));
+    final data = syncData<BalanceBean>(response);
+    return data;
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;

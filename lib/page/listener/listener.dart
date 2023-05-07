@@ -13,6 +13,7 @@ import 'package:metting/tool/view_tools.dart';
 import 'package:pull_to_refresh/src/smart_refresher.dart';
 
 import '../../base/BaseController.dart';
+import '../../database/get_storage_manager.dart';
 import '../../network/bean/topic_list_res.dart';
 import '../../widget/bottom_popup.dart';
 import '../../widget/image_m.dart';
@@ -159,7 +160,7 @@ class ListenerPage extends BaseUiPage<ListenerPageC> {
 }
 
 class ListenerPageC extends BaseController {
-  List<TopicBean> topItem = [];
+  List<TopicBean> topItem = getTopicListFGS()?.data ?? [];
   num curSelectedTopicId = -1;
   List<ListenerRes> listenerList = [];
 
@@ -179,6 +180,7 @@ class ListenerPageC extends BaseController {
   void _getTopicList() async {
     final bean = await getTopicList();
     if (bean.isOk()) {
+      saveTopicListTStorage(bean.data);
       topItem.addAll(bean.data?.data ?? []);
       update(['top']);
     }

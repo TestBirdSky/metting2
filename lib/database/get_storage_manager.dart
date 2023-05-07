@@ -1,4 +1,5 @@
 import 'package:get_storage/get_storage.dart';
+import 'package:metting/network/bean/topic_list_res.dart';
 
 import '../network/bean/chat_lang.dart';
 import '../network/bean/user_data_res.dart';
@@ -96,4 +97,17 @@ ChatLang getChatLangFStroage() {
 
 Future<void> saveChatLangTStorage(ChatLang? chatLang) {
   return _commonStorage.write('chatLang', chatLang);
+}
+
+TopicRes? getTopicListFGS() {
+  final chat = _commonStorage.read('TopicRes');
+  try {
+    return chat;
+  } catch (e) {
+    return TopicRes.fromJson(chat);
+  }
+}
+
+Future<void> saveTopicListTStorage(TopicRes? topicRes) {
+  return _commonStorage.write('TopicRes', topicRes);
 }

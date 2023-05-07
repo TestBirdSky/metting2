@@ -7,6 +7,7 @@ import 'package:metting/network/bean/front_response.dart';
 import 'package:metting/network/http_helper.dart';
 import 'package:metting/page/home/notebook.dart';
 import 'package:metting/page/home/soul.dart';
+import 'package:metting/page/home/square.dart';
 import 'package:metting/tool/log.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -67,7 +68,7 @@ class HomePage extends BaseUiPage<HomeC> {
               Expanded(
                   child: GestureDetector(
                 onTap: () {
-                  Get.to(SoulPage());
+                  Get.to(()=>SquarePage());
                 },
                 child: _btn("灵魂广场", "白天归顺于生活，晚上屈服于灵魂", "home_1btn"),
               )),

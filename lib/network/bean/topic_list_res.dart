@@ -2,6 +2,20 @@
 /// title : "title"
 /// color : "ffffffff"
 
+class TopicRes{
+  List<TopicBean>? _data;
+  List<TopicBean>? get data => _data;
+
+  TopicRes.fromJson(dynamic json) {
+    if (json != null) {
+      _data = [];
+      json.forEach((v) {
+        _data?.add(TopicBean.fromJson(v));
+      });
+    }
+  }
+}
+
 class TopicBean {
   TopicBean({
     num? id,
@@ -11,18 +25,6 @@ class TopicBean {
     _id = id;
     _title = title;
     _color = color;
-  }
-
-  List<TopicBean>? _data;
-  List<TopicBean>? get data => _data;
-
-  TopicBean.fromListJson(dynamic json) {
-    if (json != null) {
-      _data = [];
-      json.forEach((v) {
-        _data?.add(TopicBean.fromJson(v));
-      });
-    }
   }
 
   TopicBean.fromJson(dynamic json) {
