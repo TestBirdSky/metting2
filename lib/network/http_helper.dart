@@ -15,6 +15,7 @@ import 'bean/chat_lang.dart';
 import 'bean/create_record_response.dart';
 import 'bean/file_response.dart';
 import 'bean/front_response.dart';
+import 'bean/pay_list_response.dart';
 import 'bean/random_nickname.dart';
 import 'bean/topic_list_res.dart';
 import 'dio_helper.dart';
@@ -147,7 +148,7 @@ Future<BasePageData<TreadList?>> getTreadList(int page) async {
     Response response = await getDio().post('index/Trends/trendsList',
         data: _addCommonInfo({"page": page}));
     logger.i("$response---${response.data}}");
-    return syncData(response);
+    return syncData<TreadList>(response);
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;
@@ -376,6 +377,7 @@ Future<BasePageData> addSquare(List<String> topics, int type, int pirce, String 
   }
 }
 
+//余额
 Future<BasePageData<BalanceBean?>> getMyBalance()async{
   try {
     Response response = await getDio().post('index/Pay/getBalance',
@@ -387,3 +389,16 @@ Future<BasePageData<BalanceBean?>> getMyBalance()async{
     return errorBasePageData;
   }
 }
+Future<BasePageData<PayListResponse?>> getPayList()async{
+  try {
+    Response response = await getDio().post('index/Pay/rechargeList',
+        data: _addCommonInfo({}));
+    final data = syncData<PayListResponse>(response);
+    return data;
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+

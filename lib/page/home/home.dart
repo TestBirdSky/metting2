@@ -42,7 +42,9 @@ class HomePage extends BaseUiPage<HomeC> {
           child: Padding(
             padding: EdgeInsets.only(bottom: 200.h, right: 9.w),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                addTextTrends("content");
+              },
               child: Image.asset(
                 getImagePath('mine_edit'),
                 width: 66.w,

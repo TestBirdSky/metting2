@@ -36,9 +36,6 @@ class MinePage extends BaseUiPage<MineC> {
             _widgetPersonIcon(),
             _selectPageBtn(),
             _childPage(),
-            SizedBox(
-              height: 90.h,
-            )
           ],
         )),
       ],
@@ -153,7 +150,7 @@ class MinePage extends BaseUiPage<MineC> {
                     )),
                 Expanded(
                   flex: 1,
-                  child: _selectedStyle('我的故事'),
+                  child: _selectedStyle('我的动态'),
                 ),
               ],
             );
@@ -191,7 +188,7 @@ class MinePage extends BaseUiPage<MineC> {
 
   Widget _childPage() {
     return SizedBox(
-      height: 460.h,
+      height: 550.h,
       child: PageView(
         controller: pageController,
         onPageChanged: (index) {

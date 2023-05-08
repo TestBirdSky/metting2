@@ -12,6 +12,7 @@ import 'bean/file_response.dart';
 import 'bean/front_response.dart';
 import 'bean/login_response.dart';
 import 'bean/note_details.dart';
+import 'bean/pay_list_response.dart';
 import 'bean/random_nickname.dart';
 import 'bean/square.dart';
 import 'bean/topic_list_res.dart';
@@ -54,6 +55,8 @@ BasePageData<T> syncData<T>(Response response) {
         data = SquareRes.fromJson(respData.data) as T;
       } else if (k == "BalanceBean") {
         data = BalanceBean.fromJson(respData.data) as T;
+      }else if (k == "PayListResponse") {
+        data = PayListResponse.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type${response.data}');
         data = response.data;

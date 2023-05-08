@@ -10,6 +10,7 @@ import '../../core/common_configure.dart';
 import '../../dialog/my_dialog.dart';
 import 'bug_vip.dart';
 import 'mine.dart';
+import 'mine_wallet.dart';
 
 class MineInfo extends StatelessWidget {
   MineInfo(this.controller);
@@ -37,7 +38,9 @@ class MineInfo extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(5.w))),
               child: Row(
                 children: [
-                  _item1('mine_wallet', '我的钱包', () {}),
+                  _item1('mine_wallet', '我的钱包', () {
+                    Get.to(WalletPage());
+                  }),
                   _item1('mine_listener_p', '倾听者', () {}),
                   _item1('mine_vip', '我的会员', () {
                     Get.to(() => BuyVipPage());

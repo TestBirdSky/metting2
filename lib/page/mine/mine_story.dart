@@ -21,28 +21,31 @@ class MineStory extends BaseStatelessPage<MineStoryC> {
   Widget createBody(BuildContext context) {
     return Stack(
       children: [
-        GetBuilder<MineStoryC>(
-            id: 'list',
-            builder: (c) {
-              return RefreshConfiguration(
-                // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
-                hideFooterWhenNotFull: true,
-                child: SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: true,
-                  header: const MyClassicHeader(),
-                  footer: const MyClassicFooter(),
-                  // 配置默认底部指示器
-                  controller: mRefreshController,
-                  onRefresh: onRefresh,
-                  onLoading: onLoad,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: _list(),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          child: GetBuilder<MineStoryC>(
+              id: 'list',
+              builder: (c) {
+                return RefreshConfiguration(
+                  // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
+                  hideFooterWhenNotFull: true,
+                  child: SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: true,
+                    header: const MyClassicHeader(),
+                    footer: const MyClassicFooter(),
+                    // 配置默认底部指示器
+                    controller: mRefreshController,
+                    onRefresh: onRefresh,
+                    onLoading: onLoad,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: _list(),
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+        ),
       ],
     );
   }
@@ -61,11 +64,19 @@ class MineStory extends BaseStatelessPage<MineStoryC> {
   }
 
   Widget titleWidget() {
-    return Text(
-      "我的故事",
-      textAlign: TextAlign.start,
-      style: TextStyle(color: Colors.white, fontSize: 20.sp),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: Text(
+        "我的动态",
+        textAlign: TextAlign.start,
+        style: TextStyle(color: Colors.white, fontSize: 20.sp),
+      ),
     );
+  }
+
+  @override
+  Color pageBackgroundColor() {
+    return Colors.transparent;
   }
 
   @override
@@ -103,10 +114,9 @@ class MineStory extends BaseStatelessPage<MineStoryC> {
             treadBean.content ?? "",
             style: TextStyle(color: Color(0xffBBBABA), fontSize: 12.sp),
           ),
-        ),
-        (context) {
-          controller.delTread(treadBean);
-        });
+        ), (context) {
+      controller.delTread(treadBean);
+    });
   }
 
   Widget _slidableWithDelete(Widget child, SlidableActionCallback? onPressed) {

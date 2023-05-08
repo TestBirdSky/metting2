@@ -33,8 +33,12 @@ abstract class BaseStatelessPage<T> extends StatelessWidget {
   Widget _createWidget(BuildContext context) {
     return Scaffold(
       appBar: appBarWidget(),
-      backgroundColor: C.PAGE_THEME_BG,
+      backgroundColor: pageBackgroundColor(),
       body: createBody(context),
     );
+  }
+
+  Color pageBackgroundColor(){
+    return C.PAGE_THEME_BG;
   }
 }

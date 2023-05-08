@@ -21,10 +21,43 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
         Scaffold(
           appBar: _appBarWidget(),
           backgroundColor: C.TRANSPORT,
-          body: Column(
-            children: [
-              Text('data'),
-            ],
+          body: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Stack(
+              children: [
+                Image.asset(
+                  getImagePath('ic_vip_bg_c'),
+                  height: 648.h,
+                  fit: BoxFit.fitWidth,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 12.h,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '会员用户',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20.sp),
+                          ),
+                          Expanded(child: SizedBox()),
+                          Text(
+                            '${controller.time}',
+                            style: TextStyle(
+                                color: Color(0xffE9CFA4), fontSize: 22.sp),
+                          ),
+                        ],
+                      ),
+
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         )
       ],
@@ -57,4 +90,6 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
   }
 }
 
-class BuyVipController extends BaseController {}
+class BuyVipController extends BaseController {
+  String time = "";
+}
