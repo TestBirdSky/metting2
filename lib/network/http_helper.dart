@@ -144,7 +144,7 @@ Future<BasePageData> delMineAccount() async {
 
 Future<BasePageData<TreadList?>> getTreadList(int page) async {
   try {
-    Response response = await getDio().post('  index/Trends/trendsList',
+    Response response = await getDio().post('index/Trends/trendsList',
         data: _addCommonInfo({"page": page}));
     logger.i("$response---${response.data}}");
     return syncData(response);
@@ -178,7 +178,7 @@ Future<BasePageData> addTextTrends(String content) async {
   }
 }
 
-Future<BasePageData> delTrends(int trendId) async {
+Future<BasePageData> delTrends(num trendId) async {
   try {
     Response response =
         await getDio().post('index/Trends/delTrends', data: _addCommonInfo({}));
