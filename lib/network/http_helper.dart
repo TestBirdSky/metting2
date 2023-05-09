@@ -18,6 +18,8 @@ import 'bean/front_response.dart';
 import 'bean/pay_list_response.dart';
 import 'bean/random_nickname.dart';
 import 'bean/topic_list_res.dart';
+import 'bean/vip_res.dart';
+import 'bean/withdrawal_list.dart';
 import 'dio_helper.dart';
 import 'sync_data.dart';
 
@@ -145,8 +147,8 @@ Future<BasePageData> delMineAccount() async {
 
 Future<BasePageData<TreadList?>> getTreadList(int page) async {
   try {
-    Response response = await getDio().post('index/Trends/trendsList',
-        data: _addCommonInfo({"page": page}));
+    Response response = await getDio()
+        .post('index/Trends/trendsList', data: _addCommonInfo({"page": page}));
     logger.i("$response---${response.data}}");
     return syncData<TreadList>(response);
   } catch (e) {
@@ -359,7 +361,8 @@ Future<BasePageData<SquareRes?>> getSquareList(int page) async {
   }
 }
 
-Future<BasePageData> addSquare(List<String> topics, int type, int pirce, String des, int time) async {
+Future<BasePageData> addSquare(
+    List<String> topics, int type, int pirce, String des, int time) async {
   try {
     Response response = await getDio().post('index/Square/addSquare',
         data: _addCommonInfo({
@@ -378,10 +381,10 @@ Future<BasePageData> addSquare(List<String> topics, int type, int pirce, String 
 }
 
 //余额
-Future<BasePageData<BalanceBean?>> getMyBalance()async{
+Future<BasePageData<BalanceBean?>> getMyBalance() async {
   try {
-    Response response = await getDio().post('index/Pay/getBalance',
-        data: _addCommonInfo({}));
+    Response response =
+        await getDio().post('index/Pay/getBalance', data: _addCommonInfo({}));
     final data = syncData<BalanceBean>(response);
     return data;
   } catch (e) {
@@ -389,10 +392,12 @@ Future<BasePageData<BalanceBean?>> getMyBalance()async{
     return errorBasePageData;
   }
 }
-Future<BasePageData<PayListResponse?>> getPayList()async{
+
+//支付列表
+Future<BasePageData<PayListResponse?>> getPayList() async {
   try {
-    Response response = await getDio().post('index/Pay/rechargeList',
-        data: _addCommonInfo({}));
+    Response response =
+        await getDio().post('index/Pay/rechargeList', data: _addCommonInfo({}));
     final data = syncData<PayListResponse>(response);
     return data;
   } catch (e) {
@@ -401,4 +406,52 @@ Future<BasePageData<PayListResponse?>> getPayList()async{
   }
 }
 
+//提现列表
+Future<BasePageData<WithdrawalList?>> getWithdrawalList() async {
+  try {
+    Response response = await getDio()
+        .post('index/Withdrawal/withdrawalList', data: _addCommonInfo({}));
+    return syncData<WithdrawalList>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
 
+//添加体现账号
+Future<BasePageData> addAliUser(String aliID, String name) async {
+  try {
+    Response response = await getDio().post('index/Withdrawal/addAliUser',
+        data: _addCommonInfo({"aliID": aliID, "name": name}));
+    return syncData<WithdrawalList>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//提现
+Future<BasePageData<WithdrawalList?>> getWithdrawalApply(num id) async {
+  try {
+    Response response = await getDio().post(
+        'index/Withdrawal/withdrawalRecords',
+        data: _addCommonInfo({"id": id}));
+    return syncData<WithdrawalList>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//获取会员
+Future<BasePageData<VipBean?>> getPayTime(num id) async {
+  try {
+    Response response = await getDio().post(
+        'index/share/getPayTime',
+        data: _addCommonInfo({"id": id}));
+    return syncData<VipBean>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}

@@ -6,6 +6,7 @@ import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/tool/view_tools.dart';
 import 'package:metting/widget/loading.dart';
 
+import '../../core/common_configure.dart';
 import '../../dialog/wallet_dialog.dart';
 import '../../network/bean/pay_list_response.dart';
 import '../../network/http_helper.dart';
@@ -17,29 +18,36 @@ class WalletPage extends BaseUiPage<WalletController> {
   @override
   Widget createBody(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "余额",
-            style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+            "我的余额",
+            style: TextStyle(color: Colors.white, fontSize: 16.sp),
           ),
           Row(
             children: [
-              Image.asset(
-                getImagePath('ic_wallete_icon'),
-                width: 40.w,
-                height: 40.w,
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: Image.asset(
+                  getImagePath('ic_wallete_icon'),
+                  fit: BoxFit.fill,
+                  width: 35.w,
+                  height: 35.w,
+                ),
               ),
-              GetBuilder<WalletController>(
-                  id: "money",
-                  builder: (context) {
-                    return Text(
-                      '${controller.money}',
-                      style: TextStyle(color: Colors.black, fontSize: 18.sp),
-                    );
-                  }),
+              Padding(
+                padding: EdgeInsets.only(left: 8.w, top: 12.h),
+                child: GetBuilder<WalletController>(
+                    id: "money",
+                    builder: (context) {
+                      return Text(
+                        '${controller.money}',
+                        style: TextStyle(color: C.FEC693, fontSize: 26.sp),
+                      );
+                    }),
+              ),
               const Expanded(child: SizedBox()),
               _btn()
             ],
@@ -51,7 +59,7 @@ class WalletPage extends BaseUiPage<WalletController> {
 
   Widget _btn() {
     return Container(
-      height: 40.w,
+      height: 35.w,
       child: TextButton(
           onPressed: () async {
             walletDialog ??= WalletDialog();
@@ -87,7 +95,7 @@ class WalletPage extends BaseUiPage<WalletController> {
           onPressed: () {},
           child: Text(
             "须知",
-            style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+            style: TextStyle(color: Colors.white, fontSize: 16.sp),
           ))
     ];
   }

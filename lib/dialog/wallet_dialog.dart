@@ -17,7 +17,7 @@ class WalletDialog {
       Align(
         alignment: Alignment.bottomCenter,
         child: Container(
-          height: 270.h,
+          height: 340.h,
           decoration: BoxDecoration(
             color: C.bottomDialogBgColor,
             borderRadius: BorderRadius.only(
@@ -37,6 +37,7 @@ class WalletDialog {
                 height: 10.h,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '余额',
@@ -55,15 +56,22 @@ class WalletDialog {
               SizedBox(
                 height: 10.h,
               ),
-              StatefulBuilder(builder: (context, state) {
-                return GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10.w,
-                  mainAxisSpacing: 12.h,
-                  children: _list(list, state),
-                );
-              }),
-              const Expanded(child: SizedBox()),
+              SizedBox(
+                height: 190.h,
+                width: double.infinity,
+                child: StatefulBuilder(builder: (context, state) {
+                  return GridView.count(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    primary:false,
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12.w,
+                    mainAxisSpacing: 10.h,
+                    childAspectRatio: 1.5,
+                    shrinkWrap: true,
+                    children: _list(list, state),
+                  );
+                }),
+              ),
               _payBtn(),
               SizedBox(
                 height: 24.h,
@@ -91,40 +99,42 @@ class WalletDialog {
   }
 
   Widget _item(RechargeBean bean, bool isChecked) {
-    return Container(
-      height: 46.w,
-      width: 72.w,
+    return Align(
+      alignment: Alignment.topCenter,
       child: Stack(
         children: [
           Image.asset(
             getImagePath(
                 isChecked ? 'ic_wallete_checked' : 'ic_wallete_unchecked'),
-            height: 46.w,
-            width: 72.w,
+            fit: BoxFit.fill,
+            width: double.infinity,
+            height: double.infinity,
           ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
                 height: 8.h,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '${bean.diamondQuantity}',
-                    style: TextStyle(color: Colors.black, fontSize: 12.sp),
+                    style: TextStyle(color: Colors.black, fontSize: 14.sp),
                   ),
                   Text(
                     '金币',
-                    style: TextStyle(color: Colors.grey, fontSize: 10.sp),
+                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                   ),
                 ],
               ),
               SizedBox(
-                height: 16.h,
+                height: 8.h,
               ),
               Text(
                 '¥${bean.money}',
-                style: TextStyle(color: Colors.grey, fontSize: 10.sp),
+                style: TextStyle(color: Colors.grey, fontSize: 12.sp),
               ),
             ],
           )
@@ -136,6 +146,8 @@ class WalletDialog {
   Widget _payBtn() {
     return Container(
       height: 40.w,
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 24.w),
       child: TextButton(
           onPressed: () {},
           child: Text(

@@ -18,6 +18,8 @@ import 'bean/square.dart';
 import 'bean/topic_list_res.dart';
 import 'bean/tread_list.dart';
 import 'bean/user_data_res.dart';
+import 'bean/vip_res.dart';
+import 'bean/withdrawal_list.dart';
 
 final errorBasePageData = BasePageData(errorCodeNetworkError, '网络异常', null);
 
@@ -55,8 +57,12 @@ BasePageData<T> syncData<T>(Response response) {
         data = SquareRes.fromJson(respData.data) as T;
       } else if (k == "BalanceBean") {
         data = BalanceBean.fromJson(respData.data) as T;
-      }else if (k == "PayListResponse") {
+      } else if (k == "PayListResponse") {
         data = PayListResponse.fromJson(respData.data) as T;
+      } else if (k == "WithdrawalList") {
+        data = WithdrawalList.fromJson(respData.data) as T;
+      }else if (k == "VipBean") {
+        data = VipBean.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type${response.data}');
         data = response.data;
