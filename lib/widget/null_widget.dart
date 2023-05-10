@@ -8,7 +8,7 @@ class NullWidget extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.center,
-          child: Image.asset(getImagePath('mine_vip')),
+          child: Image.asset(getImagePath('ic_null_page_icon')),
         )
       ],
     );

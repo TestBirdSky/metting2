@@ -30,7 +30,7 @@ class FeedbackPage extends BaseUiPage<FeedbackC> {
             decoration: BoxDecoration(
                 color: Color(0xffCFCFCF),
                 borderRadius: BorderRadius.all(Radius.circular(5.w))),
-            child: _textFieldNick(),
+            child: _textFieldInput(),
           ),
           Container(
             height: 90.w,
@@ -52,7 +52,7 @@ class FeedbackPage extends BaseUiPage<FeedbackC> {
 
   final TextEditingController _controllerInput = TextEditingController();
 
-  Widget _textFieldNick() {
+  Widget _textFieldInput() {
     return TextField(
       style: TextStyle(
         fontSize: 14.sp,

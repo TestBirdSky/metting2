@@ -3,10 +3,12 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
+import 'package:metting/network/bean/vip_res.dart';
 import 'package:metting/tool/view_tools.dart';
 
 import '../../base/BaseStatelessPage.dart';
 import '../../core/common_configure.dart';
+import '../../network/http_helper.dart';
 
 class BuyVipPage extends BaseStatelessPage<BuyVipController> {
   @override
@@ -98,7 +100,7 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
                               height: 10.h,
                             ),
                             Text(
-                              '开通会员可享以下特权',
+                              controller.isSvip ? '会员可享以下特权' : '开通会员可享以下特权',
                               style: TextStyle(
                                   color: Color(0xff5E5D5B), fontSize: 14.sp),
                             ),
@@ -143,7 +145,7 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
                             child: Padding(
                               padding: EdgeInsets.only(top: 10.h),
                               child: Text(
-                                '${controller.btnText}',
+                                controller.isSvip ? '会员续费' : '成为会员',
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 24.sp),
                               ),
@@ -189,10 +191,14 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
     return AppBar(
       centerTitle: true,
       leading: backWidget(),
-      title: Text(
-        '成为VIP会员',
-        style: TextStyle(color: C.whiteFFFFFF, fontSize: 18.sp),
-      ),
+      title: GetBuilder<BuyVipController>(
+          id: 'title',
+          builder: (context) {
+            return Text(
+              controller.vipBean?.svip == 1 ? 'VIP会员' : '成为VIP会员',
+              style: TextStyle(color: C.whiteFFFFFF, fontSize: 18.sp),
+            );
+          }),
       backgroundColor: C.TRANSPORT,
     );
   }
@@ -209,9 +215,22 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
 }
 
 class BuyVipController extends BaseController {
-  String time = "2023-12-26";
-  String btnText = '立即开通';
+  String time = "";
+  bool isSvip = false;
+  VipBean? vipBean;
 
+  @override
+  void onInit() {
+    super.onInit();
+    _getData();
+  }
 
-
+  void _getData() async {
+    final data = await getPayTime();
+    if (data.isOk()) {
+      vipBean = data.data;
+      isSvip = vipBean?.svip == 1;
+      time = vipBean?.svipEndTime ?? "";
+    }
+  }
 }

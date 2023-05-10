@@ -43,7 +43,7 @@ class WalletPage extends BaseUiPage<WalletController> {
                     id: "money",
                     builder: (context) {
                       return Text(
-                        '${controller.money}',
+                        controller.money,
                         style: TextStyle(color: C.FEC693, fontSize: 26.sp),
                       );
                     }),
@@ -102,7 +102,7 @@ class WalletPage extends BaseUiPage<WalletController> {
 }
 
 class WalletController extends BaseController {
-  int money = 0;
+  String money = "0";
 
   final List<RechargeBean> _list = [];
 
@@ -117,6 +117,20 @@ class WalletController extends BaseController {
       return _list;
     } else {
       return _list;
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    _getMBalance();
+  }
+
+  void _getMBalance() async {
+    final data = await getMyBalance();
+    if (data.isOk()) {
+      money = data.data?.balance ?? "0";
+      update(['money']);
     }
   }
 }

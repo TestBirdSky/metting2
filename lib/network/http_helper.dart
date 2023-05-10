@@ -444,11 +444,11 @@ Future<BasePageData<WithdrawalList?>> getWithdrawalApply(num id) async {
 }
 
 //获取会员
-Future<BasePageData<VipBean?>> getPayTime(num id) async {
+Future<BasePageData<VipBean?>> getPayTime() async {
   try {
     Response response = await getDio().post(
         'index/share/getPayTime',
-        data: _addCommonInfo({"id": id}));
+        data: _addCommonInfo({}));
     return syncData<VipBean>(response);
   } catch (e) {
     logger.e("$e");

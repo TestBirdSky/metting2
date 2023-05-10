@@ -9,7 +9,7 @@ import '../network/bean/pay_list_response.dart';
 class WalletDialog {
   int curSelectedItem = 1;
 
-  Future<dynamic> showDialog(List<RechargeBean> list, int money) {
+  Future<dynamic> showDialog(List<RechargeBean> list, String money) {
     return Get.dialog(
       barrierColor: Color(0x00000000),
       barrierDismissible: true,
@@ -149,14 +149,12 @@ class WalletDialog {
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 24.w),
       child: TextButton(
-          onPressed: () {},
-          child: Text(
-            '立即支付',
-            style: TextStyle(color: Colors.white, fontSize: 14.sp),
-          ),
+          onPressed: () {
+
+          },
           style: ButtonStyle(
               enableFeedback: false,
-              backgroundColor: MaterialStateProperty.all(Color(0xffFEC693)),
+              backgroundColor: MaterialStateProperty.all(const Color(0xffFEC693)),
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
                   // side: BorderSide(   Padding(padding: EdgeInsets.only(top: 16.h)),
@@ -165,7 +163,11 @@ class WalletDialog {
                   // ),
                   borderRadius: BorderRadius.circular(24),
                 ),
-              ))),
+              )),
+          child: Text(
+            '立即支付',
+            style: TextStyle(color: Colors.white, fontSize: 14.sp),
+          )),
     );
   }
 }
