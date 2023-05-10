@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseUiPage.dart';
+import 'package:metting/widget/my_toast.dart';
 
 import '../../base/BaseController.dart';
 import '../../core/common_configure.dart';
@@ -186,6 +187,10 @@ class WithdrawalController extends BaseController {
 
   void initData() async {
     final data = await getWithdrawalList();
-    if (data.isOk()) {}
+    if (data.isOk()) {
+      list = data.data?.data ?? [];
+    } else {
+      MyToast.show(data.msg);
+    }
   }
 }

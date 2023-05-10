@@ -346,7 +346,7 @@ class EditInfoC extends BaseController {
   var language = <String>[];
   var selectLanguage = <String>[];
   var selected = DateTime(2000, 1, 1);
-  UserDataRes? mineInfo = getMineUserBasic();
+  UserDataRes? mineInfo = GStorage.getMineUserBasic();
 
   Future<void> finish(String nickName) async {
     if (localImgUrl != null) {
@@ -429,14 +429,13 @@ class EditInfoC extends BaseController {
     if (data.isOk()) {
       mineInfo = data.data;
       if (mineInfo != null) {
-        saveUserBasic(mineInfo!);
+        GStorage.saveUserBasic(mineInfo!);
       }
       _updateInfo();
     }
   }
 
   void _updateInfo() {
-    mineInfo = getUserBasic(getMineUID());
     headerImgUrl = mineInfo?.avatar ?? "";
     selectLanguage = mineInfo?.lang ?? [];
     _setSelectedBirthday();

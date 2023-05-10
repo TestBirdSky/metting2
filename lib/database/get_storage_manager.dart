@@ -26,33 +26,6 @@ Future<void> saveLoginAccount(String account) {
   return _firstInitStorage.write('accountLast', account);
 }
 
-///保存某个人的基本信息数据
-Future<void> saveUserBasic(UserDataRes userBasic) {
-  return _commonStorage.write('${userBasic.uid}', userBasic);
-}
-
-///获取某个人的基本信息数据
-UserDataRes? getUserBasic(int uid) {
-  final userBasicMap = _commonStorage.read('$uid');
-  try {
-    logger.i(userBasicMap);
-    return userBasicMap;
-  } catch (e) {
-    logger.e(e);
-    return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
-  }
-}
-///获取某个人的基本信息数据
-UserDataRes? getMineUserBasic() {
-  final userBasicMap = _commonStorage.read('${getMineUID()}');
-  try {
-    return userBasicMap;
-  } catch (e) {
-    logger.e(e);
-    return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
-  }
-}
-
 ChatLang getChatLangFStroage() {
   final str = {
     "chat_lang": [
@@ -110,4 +83,42 @@ TopicRes? getTopicListFGS() {
 
 Future<void> saveTopicListTStorage(TopicRes? topicRes) {
   return _commonStorage.write('TopicRes', topicRes);
+}
+
+class GStorage {
+  static bool getIsOpenMessageNotification() {
+    return _commonStorage.read('messNotificationStatus');
+  }
+
+  static Future<void> saveMessageNotificationStatus(bool isOpen) {
+    return _commonStorage.write('messNotificationStatus', isOpen);
+  }
+
+  ///获取某个人的基本信息数据
+  static UserDataRes? getMineUserBasic() {
+    final userBasicMap = _commonStorage.read('${getMineUID()}');
+    try {
+      return userBasicMap;
+    } catch (e) {
+      logger.e(e);
+      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
+    }
+  }
+
+  ///获取某个人的基本信息数据
+  static UserDataRes? getUserBasic(int uid) {
+    final userBasicMap = _commonStorage.read('$uid');
+    try {
+      logger.i(userBasicMap);
+      return userBasicMap;
+    } catch (e) {
+      logger.e(e);
+      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
+    }
+  }
+
+  ///保存某个人的基本信息数据
+  static Future<void> saveUserBasic(UserDataRes userBasic) {
+    return _commonStorage.write('${userBasic.uid}', userBasic);
+  }
 }

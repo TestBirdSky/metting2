@@ -225,7 +225,7 @@ class MineC extends BaseController {
   var headerImgUrl = "";
   var isShowWomanInfo = true;
   var isShowManInfo = true;
-  UserDataRes? mineInfo;
+  UserDataRes? mineInfo = GStorage.getMineUserBasic();
   var voicePrice = 50;
   var videoPrice = 60;
 
@@ -238,7 +238,6 @@ class MineC extends BaseController {
   @override
   void onReady() {
     super.onReady();
-    mineInfo = getUserBasic(getMineUID());
     _updateInfo();
   }
 
@@ -247,7 +246,7 @@ class MineC extends BaseController {
     if (data.isOk()) {
       mineInfo = data.data;
       if (mineInfo != null) {
-        saveUserBasic(mineInfo!);
+        GStorage.saveUserBasic(mineInfo!);
       }
       _updateInfo();
       _updatePrice();

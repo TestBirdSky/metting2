@@ -211,4 +211,7 @@ class BuyVipPage extends BaseStatelessPage<BuyVipController> {
 class BuyVipController extends BaseController {
   String time = "2023-12-26";
   String btnText = '立即开通';
+
+
+
 }
