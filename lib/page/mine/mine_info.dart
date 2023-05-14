@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:metting/page/mine/edit_info.dart';
 import 'package:metting/page/mine/setting.dart';
+import 'package:metting/page/mine/withdrawal_page.dart';
 import 'package:metting/tool/view_tools.dart';
 
 import '../../core/common_configure.dart';
@@ -41,7 +42,9 @@ class MineInfo extends StatelessWidget {
                   _item1('mine_wallet', '我的钱包', () {
                     Get.to(WalletPage());
                   }),
-                  _item1('mine_listener_p', '倾听者', () {}),
+                  _item1('mine_listener_p', '倾听者', () {
+                    Get.to(WithdrawalPage());
+                  }),
                   _item1('mine_vip', '我的会员', () {
                     Get.to(() => BuyVipPage());
                   }),

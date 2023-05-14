@@ -15,7 +15,7 @@ class WithdrawalPage extends BaseUiPage<WithdrawalController> {
 
   @override
   Widget createBody(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -43,7 +43,7 @@ class WithdrawalPage extends BaseUiPage<WithdrawalController> {
                         id: "money",
                         builder: (context) {
                           return Text(
-                            '${controller.money}',
+                            controller.money,
                             style: TextStyle(color: C.FEC693, fontSize: 26.sp),
                           );
                         }),
@@ -54,17 +54,18 @@ class WithdrawalPage extends BaseUiPage<WithdrawalController> {
             ],
           ),
         ),
-        SizedBox(
+        Container(
           height: 190.h,
           width: double.infinity,
+          margin: EdgeInsets.symmetric(vertical: 12.h),
           child: GetBuilder<WithdrawalController>(
               id: 'selected',
               builder: (c) {
                 return GridView.count(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   primary: false,
                   crossAxisCount: 3,
-                  crossAxisSpacing: 12.w,
+                  crossAxisSpacing: 8.w,
                   mainAxisSpacing: 10.h,
                   childAspectRatio: 1.5,
                   shrinkWrap: true,
@@ -72,9 +73,14 @@ class WithdrawalPage extends BaseUiPage<WithdrawalController> {
                 );
               }),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: _btn(),
+        _info(),
+        Expanded(child: Text('')),
+        Padding(
+          padding: EdgeInsets.only(bottom: 48.h),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: _btn(),
+          ),
         ),
       ],
     );
@@ -101,36 +107,100 @@ class WithdrawalPage extends BaseUiPage<WithdrawalController> {
   Widget _item(WithdrawalBean bean, bool isChecked) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Stack(
-        children: [
-          Image.asset(
-            getImagePath(
-                isChecked ? 'ic_wallete_checked' : 'ic_wallete_unchecked'),
-            fit: BoxFit.fill,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-          Column(
+      child: Container(
+        decoration: BoxDecoration(
+            color: Color(0xFFEEEEEE),
+            border: Border.all(
+                color: isChecked ? C.FEC693 : Color(0xFFD7D7D7), width: 1.5.w),
+            borderRadius: BorderRadius.all(Radius.circular(5.w))),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    '${bean.money}RMB',
+                    style: TextStyle(
+                        color: !isChecked ? Color(0xff515151) : C.FEC693,
+                        fontSize: 16.sp),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    '${bean.number}金币',
+                    style: TextStyle(
+                        color: !isChecked ? Color(0xff515151) : C.FEC693,
+                        fontSize: 14.sp),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _accountName = "";
+  String _account = "";
+
+  Widget _info() {
+    return Column(
+      children: [
+        Container(
+          height: 90.h,
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(
+              color: Color(0xFFEEEEEE),
+              borderRadius: BorderRadius.all(Radius.circular(5.w))),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 8.h,
-              ),
               Text(
-                '${bean.money}RMB',
-                style: TextStyle(color: Colors.white, fontSize: 20.sp),
+                '提现到支付宝',
+                style: TextStyle(color: Color(0xff515151), fontSize: 18.sp),
+                textAlign: TextAlign.start,
               ),
-              SizedBox(
-                height: 8.h,
-              ),
-              Text(
-                '${bean.number}金币',
-                style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+              SizedBox(height: 4.h,),
+              Row(
+                children: [
+                  Text(
+                    '收款人户名：',
+                    style: TextStyle(color: Color(0xff515151), fontSize: 14.sp),
+                  ),
+                  Text(
+                    _accountName,
+                    style: TextStyle(color: Color(0xff515151), fontSize: 14.sp),
+                  ),
+                ],
+              ),  Row(
+                children: [
+                  Text(
+                    '收款账号：',
+                    style: TextStyle(color: Color(0xff515151), fontSize: 14.sp),
+                  ),
+                  Text(
+                    _account,
+                    style: TextStyle(color: Color(0xff515151), fontSize: 14.sp),
+                  ),
+                ],
               ),
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        SizedBox(height:12.h),
+        _btnSetAccount(),
+      ],
     );
   }
 
@@ -144,6 +214,32 @@ class WithdrawalPage extends BaseUiPage<WithdrawalController> {
             style: TextStyle(color: Colors.white, fontSize: 16.sp),
           ))
     ];
+  }
+
+  Widget _btnSetAccount() {
+    return Container(
+      height: 40.w,
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 24.w),
+      child: TextButton(
+          onPressed: () {},
+          style: ButtonStyle(
+              enableFeedback: false,
+              backgroundColor: MaterialStateProperty.all(Color(0xffFEC693)),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  // side: BorderSide(   Padding(padding: EdgeInsets.only(top: 16.h)),
+                  //   width: 0.5,
+                  //   color: MyColor.BtnNormalColor,
+                  // ),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              )),
+          child: Text(
+            '设置支付宝账号',
+            style: TextStyle(color: Colors.white, fontSize: 14.sp),
+          )),
+    );
   }
 
   Widget _btn() {
@@ -188,6 +284,7 @@ class WithdrawalController extends BaseController {
     final data = await getWithdrawalList();
     if (data.isOk()) {
       list = data.data?.data ?? [];
+      update(['selected']);
     } else {
       MyToast.show(data.msg);
     }

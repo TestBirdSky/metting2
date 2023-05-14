@@ -5,10 +5,12 @@ import 'package:get/get.dart';
 import 'package:metting/page/home/home.dart';
 import 'package:metting/tool/log.dart';
 import 'package:metting/tool/view_tools.dart';
+import 'package:metting/widget/bottom_popup.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../base/base_refresh_page.dart';
 import '../../core/common_configure.dart';
 import '../../network/bean/front_response.dart';
+import '../../widget/dialog_person_info.dart';
 import '../../widget/image_m.dart';
 
 class HomeList extends GetView<HomeC> {
@@ -122,8 +124,13 @@ class HomeList extends GetView<HomeC> {
               color: Color(0xffFDFCDD),
               borderRadius: BorderRadius.all(Radius.circular(5.w))),
           child: Row(children: [
-            cardNetworkImage(bean.avatar ?? "", itemHeight, itemHeight,
-                margin: const EdgeInsets.all(0)),
+            GestureDetector(
+              child: cardNetworkImage(bean.avatar ?? "", itemHeight, itemHeight,
+                  margin: const EdgeInsets.all(0)),
+              onTap: () {
+                PersonInfoDialog().showInfoDialogWithUit(bean.uid);
+              },
+            ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
               child: Column(
@@ -190,7 +197,14 @@ class HomeList extends GetView<HomeC> {
                 width: 31.w,
                 height: 31.w,
               ),
-              onTap: () {},
+              onTap: () {
+                showBottomVideoOrVoiceChoice(
+                  () {},
+                  () {},
+                  action1Str: "视频通话(${bean.videoCall}金币/分钟)",
+                  action2Str: "语音通话(${bean.voiceCall}金币/分钟)",
+                );
+              },
             ),
           ),
         ),

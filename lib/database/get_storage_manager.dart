@@ -121,4 +121,21 @@ class GStorage {
   static Future<void> saveUserBasic(UserDataRes userBasic) {
     return _commonStorage.write('${userBasic.uid}', userBasic);
   }
+
+  static int getVoicePrice() {
+    return _commonStorage.read('voicePrice');
+  }
+
+  static Future<void> saveVoicePrice(int voicePrice) {
+    return _commonStorage.write('voicePrice', voicePrice);
+  }
+
+  static int getVideoPrice() {
+    return _commonStorage.read('videoPrice');
+  }
+
+  static Future<void> saveVideoPrice(int videoPrice) {
+    return _commonStorage.write('videoPrice', videoPrice);
+  }
+
 }

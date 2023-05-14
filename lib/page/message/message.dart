@@ -22,7 +22,7 @@ class MessagePage extends BaseUiPage<MessagePageC> {
 
   @override
   Widget createBody(BuildContext context) {
-    return GetBuilder(
+    return GetBuilder<MessagePageC>(
         id: 'list',
         builder: (c) {
           return RefreshConfiguration(
@@ -51,7 +51,7 @@ class MessagePage extends BaseUiPage<MessagePageC> {
   void onLoad() {}
 
   List<Widget> listWidget() {
-    List<Widget> child = [];
+    List<Widget> child = [Text('')];
     return child;
   }
 

@@ -16,6 +16,7 @@ import '../../base/BaseController.dart';
 import '../../database/get_storage_manager.dart';
 import '../../network/bean/topic_list_res.dart';
 import '../../widget/bottom_popup.dart';
+import '../../widget/dialog_person_info.dart';
 import '../../widget/image_m.dart';
 
 class ListenerPage extends BaseUiPage<ListenerPageC> {
@@ -345,13 +346,19 @@ class _ItemView extends GetView<ListenerPageC> {
         ),
         Row(
           children: [
-            Container(
-              padding: EdgeInsets.all(1.w),
-              decoration:
-                  BoxDecoration(color: C.FEC693, shape: BoxShape.circle),
-              width: 45.w,
-              height: 45.w,
-              child: circleNetworkWidget(listenerRes.avatar ?? "", 45.w, 45.w),
+            GestureDetector(
+              onTap: () {
+                PersonInfoDialog().showInfoDialogWithUit(listenerRes.uid!);
+              },
+              child: Container(
+                padding: EdgeInsets.all(1.w),
+                decoration:
+                    BoxDecoration(color: C.FEC693, shape: BoxShape.circle),
+                width: 45.w,
+                height: 45.w,
+                child:
+                    circleNetworkWidget(listenerRes.avatar ?? "", 45.w, 45.w),
+              ),
             ),
             SizedBox(
               width: 5.w,
@@ -381,7 +388,9 @@ class _ItemView extends GetView<ListenerPageC> {
                 width: 35.h,
               ),
               onTap: () {
-                showBottomChoice(_voice, _video);
+                showBottomVideoOrVoiceChoice(_voice, _video,
+                    action1Str: "视频通话(${listenerRes.videoCall}金币/分钟)",
+                    action2Str: "语音通话(${listenerRes.voiceCall}金币/分钟)");
               },
             )
           ],

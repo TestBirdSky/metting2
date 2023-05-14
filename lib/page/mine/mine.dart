@@ -68,7 +68,7 @@ class MinePage extends BaseUiPage<MineC> {
                     builder: (c) {
                       return GestureDetector(
                         onTap: () {
-                          showInfoDialog(controller.mineInfo!);
+                          PersonInfoDialog().showInfoDialog(controller.mineInfo!);
                         },
                         child:
                             circleNetworkWidget(c.headerImgUrl, 115.w, 115.w),
@@ -81,7 +81,9 @@ class MinePage extends BaseUiPage<MineC> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  
+                },
                 child: Image.asset(
                   getImagePath('mine_edit'),
                   width: 46.w,

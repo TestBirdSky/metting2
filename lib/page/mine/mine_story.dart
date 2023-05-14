@@ -12,6 +12,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../base/base_refresh_page.dart';
 import '../../network/bean/tread_list.dart';
 import '../../network/http_helper.dart';
+import '../../tool/view_tools.dart';
 
 class MineStory extends BaseStatelessPage<MineStoryC> {
   RefreshController mRefreshController =
@@ -99,29 +100,43 @@ class MineStory extends BaseStatelessPage<MineStoryC> {
       decoration: BoxDecoration(
           color: Color(0xff13181E),
           borderRadius: BorderRadius.all(Radius.circular(5.w))),
+      child:  Row(
+        children: [
+          SizedBox(
+              height: 78.h,
+              child: Image.asset(getImagePath('ic_voice_icon')),
+            ),
+          SizedBox(width:30.w),
+          Image.asset(getImagePath('ic_microphone'),width: 33.w,height: 33.w,)
+        ],
+      )
     );
   }
 
   Widget _itemText(TreadBean treadBean) {
-    return _slidableWithDelete(
-        Container(
-          height: itemHeight,
-          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.h),
-          decoration: BoxDecoration(
-              color: Color(0xff13181E),
-              borderRadius: BorderRadius.all(Radius.circular(5.w))),
-          child: Text(
-            treadBean.content ?? "",
-            style: TextStyle(color: Color(0xffBBBABA), fontSize: 12.sp),
-          ),
-        ), (context) {
-      controller.delTread(treadBean);
-    });
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: _slidableWithDelete(
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.h),
+            decoration: BoxDecoration(
+                color: Color(0xff13181E),
+                borderRadius: BorderRadius.all(Radius.circular(5.w))),
+            child: Text(
+              treadBean.content ?? "",
+              style: TextStyle(color: Color(0xffBBBABA), fontSize: 12.sp),
+            ),
+          ), (context) {
+        controller.delTread(treadBean);
+      }),
+    );
   }
 
   Widget _slidableWithDelete(Widget child, SlidableActionCallback? onPressed) {
     return Slidable(
         endActionPane: ActionPane(
+          extentRatio: 0.2,
           motion: const ScrollMotion(),
           children: [
             SlidableAction(

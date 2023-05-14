@@ -193,7 +193,7 @@ Future<BasePageData> delTrends(num trendId) async {
   }
 }
 
-Future<BasePageData<UserDataRes?>> getUserData(int id) async {
+Future<BasePageData<UserDataRes?>> getUserData(num id) async {
   try {
     Response response = await getDio()
         .post('index/User/getUserData', data: _addCommonInfo({"userId": id}));
@@ -446,9 +446,35 @@ Future<BasePageData<WithdrawalList?>> getWithdrawalApply(num id) async {
 //获取会员
 Future<BasePageData<VipBean?>> getPayTime() async {
   try {
-    Response response = await getDio().post(
-        'index/share/getPayTime',
-        data: _addCommonInfo({}));
+    Response response =
+        await getDio().post('index/share/getPayTime', data: _addCommonInfo({}));
+    return syncData<VipBean>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//生成内购订单号
+Future<BasePageData<VipBean?>> createOrder(int productID) async {
+  try {
+    Response response = await getDio().post('index/Pay/createOrder',
+        data: _addCommonInfo({'productID': productID}));
+    return syncData<VipBean>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//验证内购订单号     * uid [充值人UID]
+//      * orderId [充值订单id]
+//      * receipt_data [支付凭证]
+//      * transactionID [苹果交易ID]
+Future<BasePageData<VipBean?>> verifyOrderOrder(int productID) async {
+  try {
+    Response response = await getDio().post('index/Pay/verifyOrder',
+        data: _addCommonInfo({'productID': productID}));
     return syncData<VipBean>(response);
   } catch (e) {
     logger.e("$e");

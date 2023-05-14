@@ -260,7 +260,7 @@ class NoteDetailsPage extends BaseUiPage<NoteDetailsC> {
                         width: 42.h,
                       ),
                       onTap: () {
-                        showBottomChoice(_voice, _video);
+                        showBottomVideoOrVoiceChoice(_voice, _video);
                       },
                     )
                   ],

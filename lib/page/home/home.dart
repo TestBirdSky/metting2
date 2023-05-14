@@ -13,12 +13,13 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../base/BaseController.dart';
 import '../../core/common_configure.dart';
+import '../../dialog/create_tread_dialog.dart';
 import '../../tool/view_tools.dart';
 import 'home_list.dart';
 
 class HomePage extends BaseUiPage<HomeC> {
   HomePage() : super(title: "首页");
-
+  CreateTreadDialog? createTreadDialog;
   @override
   Widget createBody(BuildContext context) {
     logger.i("Home$title");
@@ -43,7 +44,8 @@ class HomePage extends BaseUiPage<HomeC> {
             padding: EdgeInsets.only(bottom: 200.h, right: 9.w),
             child: InkWell(
               onTap: () {
-                addTextTrends("content");
+                createTreadDialog??=CreateTreadDialog();
+                createTreadDialog?.showDialog();
               },
               child: Image.asset(
                 getImagePath('mine_edit'),

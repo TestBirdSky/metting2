@@ -95,7 +95,7 @@ void showBottomImageSource(
       });
 }
 
-void showBottomChoice(
+void showBottomVideoOrVoiceChoice(
   VoidCallback? action1,
   VoidCallback? action2, {
   String action1Str = "视频通话(50金币/分钟)",

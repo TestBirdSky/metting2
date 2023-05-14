@@ -8,7 +8,7 @@ Widget cardNetworkImage(String url, double widget, double height,
     {ShapeBorder? shape,
     EdgeInsetsGeometry? margin,
     double? radius,
-    Widget? errorWidget }) {
+    Widget? errorWidget}) {
   return Card(
     margin: margin ?? EdgeInsets.all(4.w),
     shape: shape ??
@@ -22,7 +22,8 @@ Widget cardNetworkImage(String url, double widget, double height,
         child: CachedNetworkImage(
           fit: BoxFit.cover,
           imageUrl: url,
-          errorWidget: (context, url, error) => errorWidget??
+          errorWidget: (context, url, error) =>
+              errorWidget ??
               Image.asset(
                 'assets/images/ic_default_icon2.png',
               ),
@@ -32,29 +33,28 @@ Widget cardNetworkImage(String url, double widget, double height,
 
 Widget circleNetworkWidget(String url, double widget, double height,
     {Widget? errorWidget}) {
-  return  ClipOval(
-          child: CachedNetworkImage(
-        fit: BoxFit.cover,
-        imageUrl: url,
-        errorWidget: (context, url, error) =>
-            errorWidget ??
-            Image.asset(
-              getImagePath('ic_default_icon2'),
-            ),
-      ));
+  return ClipOval(
+      child: CachedNetworkImage(
+    fit: BoxFit.cover,
+    imageUrl: url,
+    errorWidget: (context, url, error) =>
+        errorWidget ??
+        Image.asset(
+          getImagePath('ic_default_icon2'),
+        ),
+  ));
 }
-
 
 Widget circleNetworkWidget2(String url, double widget, double height,
     {Widget? errorWidget}) {
-  return  ClipOval(
+  return ClipOval(
       child: CachedNetworkImage(
-        fit: BoxFit.cover,
-        imageUrl: url,
-        errorWidget: (context, url, error) =>
+    fit: BoxFit.cover,
+    imageUrl: url,
+    errorWidget: (context, url, error) =>
         errorWidget ??
-            Image.asset(
-              getImagePath('ic_default_icon1'),
-            ),
-      ));
+        Image.asset(
+          getImagePath('ic_default_icon1'),
+        ),
+  ));
 }

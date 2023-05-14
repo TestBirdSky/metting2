@@ -284,7 +284,7 @@ class _ItemView extends GetView<SquareController> {
                 width: 35.h,
               ),
               onTap: () {
-                showBottomChoice(_voice, _video);
+                showBottomVideoOrVoiceChoice(_voice, _video);
               },
             )
           ],
