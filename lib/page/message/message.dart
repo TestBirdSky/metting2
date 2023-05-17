@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/widget/image_m.dart';
 import 'package:metting/widget/my_toast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -10,6 +12,7 @@ import '../../base/base_refresh_page.dart';
 import '../../core/common_configure.dart';
 import '../../database/get_storage_manager.dart';
 import '../../network/http_helper.dart';
+import '../../widget/slidable_widget.dart';
 
 class MessagePage extends BaseUiPage<MessagePageC> {
   MessagePage() : super(title: "消息");
@@ -46,13 +49,73 @@ class MessagePage extends BaseUiPage<MessagePageC> {
         });
   }
 
-  void onRefresh() {}
+  void onRefresh() {
 
-  void onLoad() {}
+  }
+
+  void onLoad() {
+
+  }
+
+  final pageController = PageController(initialPage: 0);
+
+
 
   List<Widget> listWidget() {
-    List<Widget> child = [Text('')];
+    List<Widget> child = [_item(), _item(), _item()];
     return child;
+  }
+
+  Widget _item() {
+    return slidableWithDelete(
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            height: 66.h,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+            child: Row(
+              children: [
+                cardNetworkImage("url", 50.h, 50.h),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          child: Text(''),
+                        ),
+                        Text(
+                          'name',
+                          maxLines: 1,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 14.sp),
+                        ),
+                        SizedBox(
+                          height: 4.h,
+                        ),
+                        Text(
+                          '聊天消息',
+                          maxLines: 1,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 12.sp),
+                        ),
+                        const Expanded(
+                          child: Text(''),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Text(
+                  '1分钟',
+                  style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                ),
+              ],
+            ),
+          ),
+        ),
+        (context) {});
   }
 
   @override
@@ -79,6 +142,8 @@ class MessagePage extends BaseUiPage<MessagePageC> {
 }
 
 class MessagePageC extends BaseController {
+  int pageNum = 0;
+
   bool isOpenMessageNotification = GStorage.getIsOpenMessageNotification();
 
   void setSwitch(bool isOpen) async {

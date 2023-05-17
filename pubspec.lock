@@ -272,6 +272,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.0.2"
+  im_flutter_sdk:
+    dependency: "direct main"
+    description:
+      name: im_flutter_sdk
+      sha256: "7a06b78d63dc841e3e4a783d5e40f7ae273ea8e1afb43d01c0e40e3390d9f1b5"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.0.0+5"
   image_picker:
     dependency: "direct main"
     description:

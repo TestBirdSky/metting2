@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/network/http_helper.dart';
 import 'package:metting/page/login/login.dart';
 import '../base/BaseController.dart';
@@ -35,11 +36,9 @@ class SplashPage extends BaseStatelessPage<SplashController> {
 
   @override
   SplashController initController() => SplashController();
-
 }
 
 class SplashController extends BaseController {
-
   @override
   void onInit() {
     super.onInit();
@@ -48,8 +47,19 @@ class SplashController extends BaseController {
 
   void _autoLogin() async {
     await GetStorage.init();
+    await _initSDK();
     getChatLang();
     await Future.delayed(const Duration(milliseconds: 3000));
-    Get.off(()=>LoginPage());
+    Get.off(() => LoginPage());
+  }
+
+  Future<void> _initSDK() async {
+    EMOptions options = EMOptions(
+      appKey: "1100230401164364#demo",
+      autoLogin: false,
+    );
+    await EMClient.getInstance.init(options);
+    // 通知sdk ui已经准备好，执行后才会收到`EMChatRoomEventHandler`, `EMContactEventHandler`, `EMGroupEventHandler` 回调。
+    await EMClient.getInstance.startCallback();
   }
 }

@@ -6,11 +6,14 @@ import 'package:metting/network/bean/note_details.dart';
 import 'package:metting/network/bean/square.dart';
 import 'package:metting/network/bean/tread_list.dart';
 import 'package:metting/network/bean/user_data_res.dart';
+import 'package:metting/tool/emc_helper.dart';
 import 'package:metting/tool/log.dart';
 
 import '../database/get_storage_manager.dart';
 import 'bean/all_user_notes.dart';
 import 'bean/balance_bean.dart';
+import 'bean/call_chat_history_list.dart';
+import 'bean/chat_id_bean.dart';
 import 'bean/chat_lang.dart';
 import 'bean/create_record_response.dart';
 import 'bean/file_response.dart';
@@ -19,6 +22,7 @@ import 'bean/pay_list_response.dart';
 import 'bean/random_nickname.dart';
 import 'bean/topic_list_res.dart';
 import 'bean/vip_res.dart';
+import 'bean/withdrawal_history_res.dart';
 import 'bean/withdrawal_list.dart';
 import 'dio_helper.dart';
 import 'sync_data.dart';
@@ -57,7 +61,10 @@ Future<BasePageData<LoginResponse?>> loginPhone(
     final r = syncData<LoginResponse>(response);
     logger.i('r${r.data?.toJson()}');
     saveMineUid(r.data?.uid);
-
+    LoginResponse? data = r.data;
+    if (r.isOk() && data != null) {
+      EmcHelper.signIn("${data.uid}", "${data.token}");
+    }
     return r;
   } catch (e) {
     logger.e("$e");
@@ -431,12 +438,25 @@ Future<BasePageData> addAliUser(String aliID, String name) async {
 }
 
 //提现
-Future<BasePageData<WithdrawalList?>> getWithdrawalApply(num id) async {
+Future<BasePageData> getWithdrawalApply(num id) async {
   try {
     Response response = await getDio().post(
         'index/Withdrawal/withdrawalRecords',
         data: _addCommonInfo({"id": id}));
-    return syncData<WithdrawalList>(response);
+    return syncData(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//提现历史
+Future<BasePageData<WithdrawalHistoryRes?>> getWithdrawalHistory(num page) async {
+  try {
+    Response response = await getDio().post(
+        'index/Withdrawal/withdrawal_records',
+        data: _addCommonInfo({"page": page}));
+    return syncData<WithdrawalHistoryRes>(response);
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;
@@ -476,6 +496,57 @@ Future<BasePageData<VipBean?>> verifyOrderOrder(int productID) async {
     Response response = await getDio().post('index/Pay/verifyOrder',
         data: _addCommonInfo({'productID': productID}));
     return syncData<VipBean>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData<ChatIdBean?>> createVoiceWithListener(num userid) async {
+  return _createRecord(userid, 1, 1);
+}
+
+Future<BasePageData<ChatIdBean?>> createVoiceWithUser(num userid) async {
+  return _createRecord(userid, 1, 2);
+}
+
+Future<BasePageData<ChatIdBean?>> createVideoWithUser(num userid) async {
+  return _createRecord(userid, 2, 2);
+}
+
+Future<BasePageData<ChatIdBean?>> createVideoWithListener(num userid) async {
+  return _createRecord(userid, 2, 1);
+}
+
+Future<BasePageData<ChatIdBean?>> _createRecord(
+    num userid, int type, int clazz) async {
+  try {
+    Response response = await getDio().post('index/Call/createRecord',
+        data: _addCommonInfo({'userid': userid, "type": type, "class": clazz}));
+    return syncData<ChatIdBean>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+Future<BasePageData> updateChatStatusOneMin(int id) async {
+  try {
+    Response response =
+        await getDio().post('index/Call/callHistory', data: {'id': id});
+    return syncData(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//通话记录
+Future<BasePageData<CallChatHistoryList?>> getCallHistory(int id) async {
+  try {
+    Response response =
+        await getDio().post('index/Call/call_history', data: {'id': id});
+    return syncData<CallChatHistoryList>(response);
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;

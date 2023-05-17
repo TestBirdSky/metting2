@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -95,22 +94,25 @@ class MineStory extends BaseStatelessPage<MineStoryC> {
 
   Widget _itemVoice() {
     return Container(
-      height: itemHeight,
-      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.h),
-      decoration: BoxDecoration(
-          color: Color(0xff13181E),
-          borderRadius: BorderRadius.all(Radius.circular(5.w))),
-      child:  Row(
-        children: [
-          SizedBox(
+        height: itemHeight,
+        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.h),
+        decoration: BoxDecoration(
+            color: Color(0xff13181E),
+            borderRadius: BorderRadius.all(Radius.circular(5.w))),
+        child: Row(
+          children: [
+            SizedBox(
               height: 78.h,
               child: Image.asset(getImagePath('ic_voice_icon')),
             ),
-          SizedBox(width:30.w),
-          Image.asset(getImagePath('ic_microphone'),width: 33.w,height: 33.w,)
-        ],
-      )
-    );
+            SizedBox(width: 30.w),
+            Image.asset(
+              getImagePath('ic_microphone'),
+              width: 33.w,
+              height: 33.w,
+            )
+          ],
+        ));
   }
 
   Widget _itemText(TreadBean treadBean) {
@@ -155,6 +157,12 @@ class MineStoryC extends BaseController {
   List<TreadBean> treadList = [];
   int page = 1;
 
+  @override
+  void onReady() {
+    _refresh(null);
+    super.onReady();
+  }
+
   void delTread(TreadBean treadBean) async {
     LoadingUtils.showLoading(msg: '删除中...');
     final data = await delTrends((treadBean.id ?? -1));
@@ -167,7 +175,7 @@ class MineStoryC extends BaseController {
     LoadingUtils.dismiss();
   }
 
-  void _refresh(RefreshController refreshController) async {
+  void _refresh(RefreshController? refreshController) async {
     page = 1;
     final base = await getTreadList(page);
     if (base.isOk()) {
@@ -176,11 +184,11 @@ class MineStoryC extends BaseController {
       if (list != null) {
         treadList.addAll(list);
       }
-      refreshController.refreshCompleted();
+      refreshController?.refreshCompleted();
       update(['list']);
       page++;
     } else {
-      refreshController.refreshFailed();
+      refreshController?.refreshFailed();
     }
   }
 
@@ -189,11 +197,11 @@ class MineStoryC extends BaseController {
     if (base.isOk()) {
       final list = base.data?.data;
       if (list != null) {
+        page++;
         treadList.addAll(list);
         refreshController.refreshCompleted();
         update(['list']);
       } else {
-        page++;
         refreshController.loadNoData();
       }
     } else {

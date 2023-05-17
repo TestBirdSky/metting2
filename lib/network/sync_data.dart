@@ -7,6 +7,7 @@ import '../tool/log.dart';
 import 'base_data.dart';
 import 'bean/all_user_notes.dart';
 import 'bean/balance_bean.dart';
+import 'bean/call_chat_history_list.dart';
 import 'bean/chat_lang.dart';
 import 'bean/file_response.dart';
 import 'bean/front_response.dart';
@@ -19,6 +20,7 @@ import 'bean/topic_list_res.dart';
 import 'bean/tread_list.dart';
 import 'bean/user_data_res.dart';
 import 'bean/vip_res.dart';
+import 'bean/withdrawal_history_res.dart';
 import 'bean/withdrawal_list.dart';
 
 final errorBasePageData = BasePageData(errorCodeNetworkError, '网络异常', null);
@@ -61,8 +63,12 @@ BasePageData<T> syncData<T>(Response response) {
         data = PayListResponse.fromJson(respData.data) as T;
       } else if (k == "WithdrawalList") {
         data = WithdrawalList.fromJson(respData.data) as T;
-      }else if (k == "VipBean") {
+      } else if (k == "VipBean") {
         data = VipBean.fromJson(respData.data) as T;
+      } else if (k == "CallChatHistoryList") {
+        data = CallChatHistoryList.fromJson(respData.data) as T;
+      } else if (k == "WithdrawalHistoryRes") {
+        data = WithdrawalHistoryRes.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type${response.data}');
         data = response.data;

@@ -98,10 +98,10 @@ class GStorage {
   static UserDataRes? getMineUserBasic() {
     final userBasicMap = _commonStorage.read('${getMineUID()}');
     try {
-      return userBasicMap;
+      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
     } catch (e) {
       logger.e(e);
-      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
+      return null;
     }
   }
 
@@ -110,10 +110,10 @@ class GStorage {
     final userBasicMap = _commonStorage.read('$uid');
     try {
       logger.i(userBasicMap);
-      return userBasicMap;
+      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
     } catch (e) {
       logger.e(e);
-      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
+      return null;
     }
   }
 
@@ -137,5 +137,4 @@ class GStorage {
   static Future<void> saveVideoPrice(int videoPrice) {
     return _commonStorage.write('videoPrice', videoPrice);
   }
-
 }

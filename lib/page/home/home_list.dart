@@ -9,6 +9,7 @@ import 'package:metting/widget/bottom_popup.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../base/base_refresh_page.dart';
 import '../../core/common_configure.dart';
+import '../../dialog/dialog_create_voice_video_chat.dart';
 import '../../network/bean/front_response.dart';
 import '../../widget/dialog_person_info.dart';
 import '../../widget/image_m.dart';
@@ -198,12 +199,8 @@ class HomeList extends GetView<HomeC> {
                 height: 31.w,
               ),
               onTap: () {
-                showBottomVideoOrVoiceChoice(
-                  () {},
-                  () {},
-                  action1Str: "视频通话(${bean.videoCall}金币/分钟)",
-                  action2Str: "语音通话(${bean.voiceCall}金币/分钟)",
-                );
+                showDialogCreateVideoOrVoiceChatWithUser(
+                    "${bean.voiceCall}", "${bean.videoCall}", bean.uid ?? 0);
               },
             ),
           ),
