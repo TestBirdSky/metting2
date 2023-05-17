@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/page/message/message_list.dart';
+import 'package:metting/tool/log.dart';
 import 'package:metting/widget/image_m.dart';
 import 'package:metting/widget/my_toast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -16,7 +18,6 @@ import '../../widget/slidable_widget.dart';
 
 class MessagePage extends BaseUiPage<MessagePageC> {
   MessagePage() : super(title: "消息");
-  RefreshController mRefreshController = RefreshController();
 
   @override
   Widget? backWidget() {
@@ -25,97 +26,130 @@ class MessagePage extends BaseUiPage<MessagePageC> {
 
   @override
   Widget createBody(BuildContext context) {
-    return GetBuilder<MessagePageC>(
-        id: 'list',
-        builder: (c) {
-          return RefreshConfiguration(
-            // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
-            hideFooterWhenNotFull: true,
-            child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: const MyClassicHeader(),
-              footer: const MyClassicFooter(),
-              // 配置默认底部指示器
-              controller: mRefreshController,
-              onRefresh: onRefresh,
-              onLoading: onLoad,
-              child: ListView(
-                shrinkWrap: false,
-                children: listWidget(),
-              ),
-            ),
-          );
-        });
-  }
-
-  void onRefresh() {
-
-  }
-
-  void onLoad() {
-
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _tabView(),
+        _childPage(),
+      ],
+    );
   }
 
   final pageController = PageController(initialPage: 0);
 
-
-
-  List<Widget> listWidget() {
-    List<Widget> child = [_item(), _item(), _item()];
-    return child;
-  }
-
-  Widget _item() {
-    return slidableWithDelete(
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 66.h,
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+  Widget _tabView() {
+    return GetBuilder<MessagePageC>(
+        id: 'title',
+        builder: (c) {
+          return Container(
+            height: 30.h,
+            width: 140.w,
+            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(color: Colors.grey, width: 1.w),
+                borderRadius: BorderRadius.circular(18.w)),
             child: Row(
               children: [
-                cardNetworkImage("url", 50.h, 50.h),
                 Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  child: GestureDetector(
+                    onTap: () {
+                      _setSelectIndex(0);
+                      _pageSelected();
+                    },
+                    child: Stack(
                       children: [
-                        const Expanded(
-                          child: Text(''),
+                        Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                              color: selectId == 0
+                                  ? Colors.black
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(18.w),
+                                topLeft: Radius.circular(18.w),
+                              )),
                         ),
-                        Text(
-                          'name',
-                          maxLines: 1,
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 14.sp),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            '消息',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 12.sp),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 1.w,
+                  height: double.infinity,
+                  color: Colors.grey,
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _setSelectIndex(1);
+                      _pageSelected();
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                              color: selectId == 1
+                                  ? Colors.black
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(18.w),
+                                topRight: Radius.circular(18.w),
+                              )),
                         ),
-                        SizedBox(
-                          height: 4.h,
-                        ),
-                        Text(
-                          '聊天消息',
-                          maxLines: 1,
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 12.sp),
-                        ),
-                        const Expanded(
-                          child: Text(''),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            '通话记录',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 12.sp),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                Text(
-                  '1分钟',
-                  style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                ),
               ],
             ),
-          ),
-        ),
-        (context) {});
+          );
+        });
+  }
+
+  int selectId = 0;
+
+  Widget _childPage() {
+    return SizedBox(
+      height: 500,
+      child: PageView(
+        controller: pageController,
+        onPageChanged: (index) {
+          _setSelectIndex(index);
+        },
+        children: [MessageListPage(), MessageListPage()],
+      ),
+    );
+  }
+
+  void _setSelectIndex(int index) {
+    if (selectId == index) return;
+    selectId = index;
+    controller.update(['title']);
+  }
+
+  void _pageSelected() {
+    pageController.animateTo(MediaQuery.of(mContext).size.width * selectId,
+        duration: const Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   @override
