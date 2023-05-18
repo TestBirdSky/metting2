@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:metting/base/BaseController.dart';
-import 'package:metting/page/message/message.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../../base/BaseController.dart';
 import '../../base/BaseStatelessPage.dart';
 import '../../base/base_refresh_page.dart';
+import '../../network/bean/call_chat_history_list.dart';
+import '../../network/http_helper.dart';
 import '../../widget/image_m.dart';
 import '../../widget/slidable_widget.dart';
 
-class MessageListPage extends BaseStatelessPage<MessageListController> {
+class CallRecordListPageg extends BaseStatelessPage<CallRecordListController> {
   RefreshController mRefreshController =
       RefreshController(initialRefresh: false);
 
   @override
   Widget createBody(BuildContext context) {
-    return GetBuilder<MessagePageC>(
+    return GetBuilder<CallRecordListController>(
         id: 'list',
         builder: (c) {
           return RefreshConfiguration(
@@ -41,14 +42,17 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
   }
 
   @override
-  MessageListController initController() => MessageListController();
+  CallRecordListController initController() => CallRecordListController();
 
   List<Widget> listWidget() {
-    List<Widget> child = [_item(), _item(), _item()];
+    List<Widget> child = [];
+    for (var element in controller.historyList) {
+      child.add(_item(element));
+    }
     return child;
   }
 
-  Widget _item() {
+  Widget _item(HistoryBean bean) {
     return slidableWithDelete(
         GestureDetector(
           onTap: () {},
@@ -57,7 +61,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
             child: Row(
               children: [
-                cardNetworkImage("url", 50.h, 50.h),
+                cardNetworkImage(bean.avatar ?? "", 50.h, 50.h),
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -68,19 +72,19 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
                           child: Text(''),
                         ),
                         Text(
-                          'name',
+                          bean.cname ?? "",
                           maxLines: 1,
                           style:
-                          TextStyle(color: Colors.white, fontSize: 14.sp),
+                              TextStyle(color: Colors.white, fontSize: 14.sp),
                         ),
                         SizedBox(
                           height: 4.h,
                         ),
                         Text(
-                          '聊天消息',
+                          '聊天${bean.chatMinutes}',
                           maxLines: 1,
                           style:
-                          TextStyle(color: Colors.white, fontSize: 12.sp),
+                              TextStyle(color: Colors.white, fontSize: 12.sp),
                         ),
                         const Expanded(
                           child: Text(''),
@@ -90,18 +94,67 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
                   ),
                 ),
                 Text(
-                  '1分钟',
+                  bean.time ?? "",
                   style: TextStyle(color: Colors.white, fontSize: 14.sp),
                 ),
               ],
             ),
           ),
         ),
-            (context) {});
+        (context) {});
   }
-  void onRefresh() {}
 
-  void onLoad() {}
+  void onRefresh() {
+    controller.getCallRecord(mRefreshController);
+  }
+
+  void onLoad() {
+    controller.loadMoreCallRecord(mRefreshController);
+  }
 }
 
-class MessageListController extends BaseController {}
+class CallRecordListController extends BaseController {
+  List<HistoryBean> historyList = [];
+
+  int page = 1;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getCallRecord(null);
+  }
+
+  void getCallRecord(RefreshController? refreshController) async {
+    page = 1;
+    final base = await getCallHistory(page);
+    if (base.isOk()) {
+      final list = base.data?.data;
+      historyList.clear();
+      if (list != null) {
+        historyList.addAll(list);
+      }
+      refreshController?.refreshCompleted();
+      update(['list']);
+      page++;
+    } else {
+      refreshController?.refreshFailed();
+    }
+  }
+
+  void loadMoreCallRecord(RefreshController refreshController) async {
+    final base = await getCallHistory(page);
+    if (base.isOk()) {
+      final list = base.data?.data;
+      if (list != null) {
+        page++;
+        historyList.addAll(list);
+        refreshController.refreshCompleted();
+        update(['list']);
+      } else {
+        refreshController.loadNoData();
+      }
+    } else {
+      refreshController.refreshFailed();
+    }
+  }
+}

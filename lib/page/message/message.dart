@@ -15,6 +15,7 @@ import '../../core/common_configure.dart';
 import '../../database/get_storage_manager.dart';
 import '../../network/http_helper.dart';
 import '../../widget/slidable_widget.dart';
+import 'call_record_list.dart';
 
 class MessagePage extends BaseUiPage<MessagePageC> {
   MessagePage() : super(title: "消息");
@@ -136,7 +137,7 @@ class MessagePage extends BaseUiPage<MessagePageC> {
         onPageChanged: (index) {
           _setSelectIndex(index);
         },
-        children: [MessageListPage(), MessageListPage()],
+        children: [MessageListPage(), CallRecordListPageg()],
       ),
     );
   }

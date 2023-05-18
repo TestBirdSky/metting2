@@ -451,7 +451,8 @@ Future<BasePageData> getWithdrawalApply(num id) async {
 }
 
 //提现历史
-Future<BasePageData<WithdrawalHistoryRes?>> getWithdrawalHistory(num page) async {
+Future<BasePageData<WithdrawalHistoryRes?>> getWithdrawalHistory(
+    num page) async {
   try {
     Response response = await getDio().post(
         'index/Withdrawal/withdrawal_records',
@@ -542,10 +543,10 @@ Future<BasePageData> updateChatStatusOneMin(int id) async {
 }
 
 //通话记录
-Future<BasePageData<CallChatHistoryList?>> getCallHistory(int id) async {
+Future<BasePageData<CallChatHistoryList?>> getCallHistory(int page) async {
   try {
-    Response response =
-        await getDio().post('index/Call/call_history', data: {'id': id});
+    Response response = await getDio()
+        .post('index/Call/call_history', data: _addCommonInfo({"page":page}));
     return syncData<CallChatHistoryList>(response);
   } catch (e) {
     logger.e("$e");
