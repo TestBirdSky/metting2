@@ -9,6 +9,7 @@ import 'package:metting/page/login/login.dart';
 import 'package:metting/page/mine/feedback.dart';
 
 import '../../base/BaseController.dart';
+import '../../database/get_storage_manager.dart';
 import '../../network/http_helper.dart';
 import '../../widget/dialog_alert.dart';
 import '../../widget/my_toast.dart';
@@ -153,6 +154,7 @@ class SettingPage extends BaseUiPage<SettingC> {
 
 class SettingC extends BaseController {
   void logout() {
+    GStorage.logoutClear();
     Get.offAll(LoginPage());
   }
 

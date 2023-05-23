@@ -26,6 +26,14 @@ Future<void> saveLoginAccount(String account) {
   return _firstInitStorage.write('accountLast', account);
 }
 
+String getEmToken() {
+  return _firstInitStorage.read('emToken') ?? '';
+}
+
+Future<void> saveEmToken(String token) {
+  return _firstInitStorage.write('emToken', token);
+}
+
 ChatLang getChatLangFStroage() {
   final str = {
     "chat_lang": [
@@ -136,5 +144,11 @@ class GStorage {
 
   static Future<void> saveVideoPrice(int videoPrice) {
     return _commonStorage.write('videoPrice', videoPrice);
+  }
+
+  static void logoutClear() {
+    saveEmToken("");
+    saveMineUid(-1);
+    saveLoginAccount("");
   }
 }

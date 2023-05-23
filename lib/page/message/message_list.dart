@@ -104,4 +104,6 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
   void onLoad() {}
 }
 
-class MessageListController extends BaseController {}
+class MessageListController extends BaseController {
+
+}

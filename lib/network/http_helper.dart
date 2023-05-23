@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/network/base_data.dart';
 import 'package:metting/network/bean/listener.dart';
 import 'package:metting/network/bean/login_response.dart';
@@ -69,6 +70,17 @@ Future<BasePageData<LoginResponse?>> loginPhone(
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;
+  }
+}
+
+Future<BasePageData> autoLogin() async {
+  try {
+    final token = getEmToken();
+    final _userId = getMineUID();
+    await EMClient.getInstance.login("$_userId", token, false);
+    return BasePageData(respCodeSuccess, "", null);
+  } on EMError catch (e) {
+    return BasePageData(e.code, e.description, null);
   }
 }
 
@@ -546,7 +558,7 @@ Future<BasePageData> updateChatStatusOneMin(int id) async {
 Future<BasePageData<CallChatHistoryList?>> getCallHistory(int page) async {
   try {
     Response response = await getDio()
-        .post('index/Call/call_history', data: _addCommonInfo({"page":page}));
+        .post('index/Call/call_history', data: _addCommonInfo({"page": page}));
     return syncData<CallChatHistoryList>(response);
   } catch (e) {
     logger.e("$e");
