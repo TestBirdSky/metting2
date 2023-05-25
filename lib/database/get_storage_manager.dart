@@ -108,7 +108,7 @@ class GStorage {
     try {
       return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
     } catch (e) {
-      logger.e(e);
+      logger.e("$e --$userBasicMap --${getMineUID()}");
       return null;
     }
   }

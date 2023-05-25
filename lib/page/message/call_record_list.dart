@@ -49,6 +49,10 @@ class CallRecordListPageg extends BaseStatelessPage<CallRecordListController> {
     for (var element in controller.historyList) {
       child.add(_item(element));
     }
+    child.add(Padding(
+      padding: EdgeInsets.only(bottom: 40.h),
+      child: const Text(''),
+    ));
     return child;
   }
 
@@ -63,33 +67,36 @@ class CallRecordListPageg extends BaseStatelessPage<CallRecordListController> {
               children: [
                 cardNetworkImage(bean.avatar ?? "", 50.h, 50.h),
                 Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          child: Text(''),
-                        ),
-                        Text(
-                          bean.cname ?? "",
-                          maxLines: 1,
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 14.sp),
-                        ),
-                        SizedBox(
-                          height: 4.h,
-                        ),
-                        Text(
-                          '聊天${bean.chatMinutes}',
-                          maxLines: 1,
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 12.sp),
-                        ),
-                        const Expanded(
-                          child: Text(''),
-                        ),
-                      ],
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            child: Text(''),
+                          ),
+                          Text(
+                            bean.cname ?? "",
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14.sp),
+                          ),
+                          SizedBox(
+                            height: 4.h,
+                          ),
+                          Text(
+                            '通话${bean.chatMinutes}分钟',
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 12.sp),
+                          ),
+                          const Expanded(
+                            child: Text(''),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

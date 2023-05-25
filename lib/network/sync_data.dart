@@ -8,6 +8,7 @@ import 'base_data.dart';
 import 'bean/all_user_notes.dart';
 import 'bean/balance_bean.dart';
 import 'bean/call_chat_history_list.dart';
+import 'bean/chat_id_bean.dart';
 import 'bean/chat_lang.dart';
 import 'bean/file_response.dart';
 import 'bean/front_response.dart';
@@ -69,6 +70,8 @@ BasePageData<T> syncData<T>(Response response) {
         data = CallChatHistoryList.fromJson(respData.data) as T;
       } else if (k == "WithdrawalHistoryRes") {
         data = WithdrawalHistoryRes.fromJson(respData.data) as T;
+      } else if (k == "ChatIdBean") {
+        data = ChatIdBean.fromJson(respData.data) as T;
       } else {
         logger.i('syncData not set data Type${response.data}');
         data = response.data;

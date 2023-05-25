@@ -50,21 +50,22 @@ class SplashController extends BaseController {
   void _autoLogin() async {
     await GetStorage.init();
     await _initSDK();
+    _eMAutoLogin;
     getChatLang();
-    await _eMAutoLogin;
+    Get.off(() => LoginPage());
   }
 
   Future<void> _initSDK() async {
     EMOptions options = EMOptions(
       appKey: "1100230401164364#demo",
-      autoLogin: true,
+      autoLogin: false,
     );
     await EMClient.getInstance.init(options);
     // 通知sdk ui已经准备好，执行后才会收到`EMChatRoomEventHandler`, `EMContactEventHandler`, `EMGroupEventHandler` 回调。
     await EMClient.getInstance.startCallback();
   }
 
-  Future _eMAutoLogin() async {
+  Future<void> _eMAutoLogin() async {
     final data = await autoLogin();
     if (data.isOk()) {
       Get.off(()=> MainPage());

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../core/common_configure.dart';
+import '../tool/log.dart';
 import 'custom_text.dart';
 
 void showBottomImageSource(
@@ -120,7 +121,7 @@ void showBottomVideoOrVoiceChoice(
               TextButton(
                   onPressed: () {
                     Get.back();
-                    action2?.call();
+                    action1?.call();
                   },
                   child: CustomText(
                       text: action1Str,
@@ -134,7 +135,7 @@ void showBottomVideoOrVoiceChoice(
               TextButton(
                   onPressed: () {
                     Get.back();
-                    action1?.call();
+                    action2?.call();
                   },
                   child: CustomText(
                       text: action2Str,
@@ -148,7 +149,6 @@ void showBottomVideoOrVoiceChoice(
               TextButton(
                   onPressed: () {
                     Get.back();
-                    action1?.call();
                   },
                   child: CustomText(
                       text: '取消',

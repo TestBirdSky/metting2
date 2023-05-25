@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/base/base_refresh_page.dart';
 import 'package:metting/core/common_configure.dart';
+import 'package:metting/dialog/dialog_create_voice_video_chat.dart';
 import 'package:metting/network/bean/listener.dart';
 import 'package:metting/network/http_helper.dart';
 import 'package:metting/tool/log.dart';
@@ -388,9 +389,8 @@ class _ItemView extends GetView<ListenerPageC> {
                 width: 35.h,
               ),
               onTap: () {
-                showBottomVideoOrVoiceChoice(_voice, _video,
-                    action1Str: "视频通话(${listenerRes.videoCall}金币/分钟)",
-                    action2Str: "语音通话(${listenerRes.voiceCall}金币/分钟)");
+                showDialogCreateVideoOrVoiceChatWithListener('${listenerRes
+                    .voiceCall}', '${listenerRes.videoCall}', listenerRes.uid ?? 0);
               },
             )
           ],

@@ -31,7 +31,7 @@ class MessagePage extends BaseUiPage<MessagePageC> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _tabView(),
-        _childPage(),
+        Expanded(child: _childPage()),
       ],
     );
   }
@@ -131,7 +131,6 @@ class MessagePage extends BaseUiPage<MessagePageC> {
 
   Widget _childPage() {
     return SizedBox(
-      height: 500,
       child: PageView(
         controller: pageController,
         onPageChanged: (index) {
@@ -164,12 +163,16 @@ class MessagePage extends BaseUiPage<MessagePageC> {
           builder: (c) {
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: CupertinoSwitch(
-                  activeColor: C.FEC693,
-                  value: c.isOpenMessageNotification,
-                  onChanged: (onChanged) async {
-                    controller.setSwitch(onChanged);
-                  }),
+              child: SizedBox(
+                width: 52.w,
+                height: 32.h,
+                child: CupertinoSwitch(
+                    activeColor: C.FEC693,
+                    value: c.isOpenMessageNotification,
+                    onChanged: (onChanged) async {
+                      controller.setSwitch(onChanged);
+                    }),
+              ),
             );
           })
     ];

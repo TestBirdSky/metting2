@@ -44,7 +44,30 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
   MessageListController initController() => MessageListController();
 
   List<Widget> listWidget() {
-    List<Widget> child = [_item(), _item(), _item()];
+    List<Widget> child = [
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+      _item(),
+    ];
+    child.add(Padding(
+      padding: EdgeInsets.only(bottom: 40.h),
+      child: Text(''),
+    ));
     return child;
   }
 
@@ -59,33 +82,36 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
               children: [
                 cardNetworkImage("url", 50.h, 50.h),
                 Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          child: Text(''),
-                        ),
-                        Text(
-                          'name',
-                          maxLines: 1,
-                          style:
-                          TextStyle(color: Colors.white, fontSize: 14.sp),
-                        ),
-                        SizedBox(
-                          height: 4.h,
-                        ),
-                        Text(
-                          '聊天消息',
-                          maxLines: 1,
-                          style:
-                          TextStyle(color: Colors.white, fontSize: 12.sp),
-                        ),
-                        const Expanded(
-                          child: Text(''),
-                        ),
-                      ],
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            child: Text(''),
+                          ),
+                          Text(
+                            'name',
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14.sp),
+                          ),
+                          SizedBox(
+                            height: 4.h,
+                          ),
+                          Text(
+                            '聊天消息',
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 12.sp),
+                          ),
+                          const Expanded(
+                            child: Text(''),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -97,8 +123,9 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
             ),
           ),
         ),
-            (context) {});
+        (context) {});
   }
+
   void onRefresh() {}
 
   void onLoad() {}

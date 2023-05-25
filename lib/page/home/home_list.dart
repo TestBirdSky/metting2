@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/page/call/call_bean.dart';
 import 'package:metting/page/home/home.dart';
 import 'package:metting/tool/log.dart';
 import 'package:metting/tool/view_tools.dart';
@@ -200,7 +201,12 @@ class HomeList extends GetView<HomeC> {
               ),
               onTap: () {
                 showDialogCreateVideoOrVoiceChatWithUser(
-                    "${bean.voiceCall}", "${bean.videoCall}", bean.uid ?? 0);
+                    "${bean.voiceCall}",
+                    "${bean.videoCall}",
+                    CallBean(
+                        userAvator: bean.avatar ?? "",
+                        userName: bean.cname ?? "",
+                        uid: bean.uid ?? 0));
               },
             ),
           ),
