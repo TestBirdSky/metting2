@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/network/http_helper.dart';
+import 'package:metting/tool/log.dart';
 import 'package:metting/tool/record_helper.dart';
 import 'package:metting/tool/view_tools.dart';
 import 'package:metting/widget/loading.dart';
@@ -12,13 +11,13 @@ import 'package:metting/widget/my_toast.dart';
 import '../core/common_configure.dart';
 
 class CreateTreadDialog {
-  int _itemIndex = 0;
+  RecordAudioHelper? _recordAudioHelper;
   final TextEditingController _controllerInput = TextEditingController();
   late StateSetter _dialogState;
+  int _itemIndex = 0;
   String _voiceCTips = "长按开始录入语音";
   bool _isCollectVoice = false;
   bool _isCanPutTread = false;
-  File? audioFile;
 
   void _setInputListener() {
     _controllerInput.addListener(() {
@@ -57,7 +56,7 @@ class CreateTreadDialog {
                           height: 40.h,
                         ),
                         onTap: () {
-                          Get.back();
+                          _closeDialog(isSuccess: false);
                         },
                       ),
                     ),
@@ -141,7 +140,7 @@ class CreateTreadDialog {
       maxLines: null,
       decoration: InputDecoration(
         filled: false,
-        contentPadding: EdgeInsets.symmetric(vertical: 4.0),
+        contentPadding: const EdgeInsets.symmetric(vertical: 0),
         counterText: '',
         //此处控制最大字符是否显示
         alignLabelWithHint: true,
@@ -178,20 +177,24 @@ class CreateTreadDialog {
         onTap: () {
           if (_itemIndex != 1) {
             _itemIndex = 1;
-            _dialogState(() {});
-            audioFile?.length().then((value) => _setCanPutTread(value > 0));
+            _setCanPutTread(_recordAudioHelper?.isHaveRecordFile() == true);
           }
         },
         onLongPress: () {
+          logger.i('messageon LongPress');
           if (_itemIndex == 1) {
             _isCollectVoice = true;
-            RecordAudioHelper.startRecording()
-                .then((value) => audioFile = value);
+            _recordAudioHelper ??= RecordAudioHelper();
+            _recordAudioHelper?.startRecorder();
+            _dialogState(() {});
           }
         },
-        onLongPressCancel: () {
+        onLongPressUp: () {
+          logger.i('onLongPressUp');
           _isCollectVoice = false;
-          RecordAudioHelper.stopRecording();
+          _dialogState(() {});
+          _recordAudioHelper?.stopRecording1().then((value) =>
+              _setCanPutTread(_recordAudioHelper?.isHaveRecordFile() == true));
         },
         child: _viewBtn(getImagePath(_isCollectVoice
             ? "ic_tread_voice_collect"
@@ -214,8 +217,8 @@ class CreateTreadDialog {
       flex: 1,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10.w),
-        width: 100.h,
-        height: 100.h,
+        width: 80.h,
+        height: 80.h,
         child: Image.asset(
           path,
           fit: BoxFit.cover,
@@ -230,21 +233,35 @@ class CreateTreadDialog {
       final data = await addTextTrends(_controllerInput.text.toString());
       if (data.isOk()) {
         MyToast.show('发布成功');
-        Get.back();
+        _closeDialog();
       } else {
         MyToast.show('发布失败');
       }
       LoadingUtils.dismiss();
-    } else if (audioFile != null) {
+    } else if (_recordAudioHelper?.recordAudioFile != null) {
       LoadingUtils.showSaveLoading();
-      final data = await addVoiceTrends(audioFile!, 2);
+      final data = await addVoiceTrends(_recordAudioHelper!.recordAudioFile!,
+          _recordAudioHelper!.recorderTime);
       if (data.isOk()) {
         MyToast.show('发布成功');
-        Get.back();
+        _closeDialog();
       } else {
         MyToast.show('发布失败');
       }
       LoadingUtils.dismiss();
     }
+  }
+
+  void _closeDialog({bool isSuccess = true}) {
+    _recordAudioHelper?.destroy();
+    _isCollectVoice = false;
+    _itemIndex = 0;
+    if (isSuccess) initV();
+    Get.back();
+  }
+
+  void initV() {
+    _isCanPutTread = false;
+    _controllerInput.clear();
   }
 }

@@ -47,8 +47,8 @@ class EmcHelper {
     List<MessageBean> msgBeanList = [];
     for (var element in conversations) {
       final bean=MessageBean();
-      bean.newMsg= (await element.latestMessage()).from;
-      msgBeanList.add(element.id);
+      // bean.newMsg= (await element.latestMessage()).from;
+      // msgBeanList.add(element.id);
     }
   }
 

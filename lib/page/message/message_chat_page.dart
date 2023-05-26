@@ -75,7 +75,6 @@ class MessageChatController extends BaseController {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 }

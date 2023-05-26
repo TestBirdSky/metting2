@@ -11,12 +11,15 @@ import 'package:metting/widget/dialog_person_info.dart';
 import 'package:metting/widget/image_m.dart';
 import 'package:metting/widget/my_toast.dart';
 
+import '../../dialog/create_tread_dialog.dart';
 import '../../network/http_helper.dart';
 import '../../tool/view_tools.dart';
 import '../../widget/loading.dart';
 import 'mine_story.dart';
 
 class MinePage extends BaseUiPage<MineC> {
+  CreateTreadDialog? createTreadDialog;
+
   MinePage() : super(title: "我的");
 
   @override
@@ -82,7 +85,8 @@ class MinePage extends BaseUiPage<MineC> {
             children: [
               InkWell(
                 onTap: () {
-                  
+                  createTreadDialog??=CreateTreadDialog();
+                  createTreadDialog?.showDialog();
                 },
                 child: Image.asset(
                   getImagePath('mine_edit'),

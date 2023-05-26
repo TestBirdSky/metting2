@@ -184,7 +184,7 @@ Future<BasePageData<TreadList?>> getTreadList(int page) async {
   }
 }
 
-Future<BasePageData> addVoiceTrends(File file,int second) async {
+Future<BasePageData> addVoiceTrends(File file, int second) async {
   try {
     final filePath = await fileUploadUrl(file.path);
     if (filePath.isOk() && filePath.data?.isNotEmpty == true) {
@@ -555,6 +555,7 @@ Future<BasePageData<ChatIdBean?>> _createRecord(
   }
 }
 
+//更新通话时间一分钟上报一次
 Future<BasePageData> updateChatStatusOneMin(int id) async {
   try {
     Response response =
@@ -572,6 +573,20 @@ Future<BasePageData<CallChatHistoryList?>> getCallHistory(int page) async {
     Response response = await getDio()
         .post('index/Call/call_history', data: _addCommonInfo({"page": page}));
     return syncData<CallChatHistoryList>(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}
+
+//type [txt:文本消息，img：图片消息，loc：位置消息，audio：语音消息，video：视频消息，file：文件消息，cmd：透传消息，custom：自定义消息]
+Future<BasePageData> sendMsg(String message, String userid,
+    {String type = "txt"}) async {
+  try {
+    Response response = await getDio().post('index/share/imSend',
+        data: _addCommonInfo(
+            {"message": message, "userid": userid, "type": type}));
+    return syncData(response);
   } catch (e) {
     logger.e("$e");
     return errorBasePageData;
