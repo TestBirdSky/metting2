@@ -7,6 +7,7 @@ import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/core/common_configure.dart';
 import 'package:metting/page/login/login.dart';
 import 'package:metting/page/mine/feedback.dart';
+import 'package:metting/tool/emc_helper.dart';
 
 import '../../base/BaseController.dart';
 import '../../database/get_storage_manager.dart';
@@ -155,6 +156,7 @@ class SettingPage extends BaseUiPage<SettingC> {
 class SettingC extends BaseController {
   void logout() {
     GStorage.logoutClear();
+    EmcHelper.signOut();
     Get.offAll(LoginPage());
   }
 

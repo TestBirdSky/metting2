@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/network/base_data.dart';
@@ -182,16 +184,20 @@ Future<BasePageData<TreadList?>> getTreadList(int page) async {
   }
 }
 
-Future<BasePageData> addVoiceTrends(String content, int second) async {
+Future<BasePageData> addVoiceTrends(File file,int second) async {
   try {
-    Response response = await getDio().post('index/Trends/addTrends',
-        data: _addCommonInfo({"content": content, "type": 2, "mt": second}));
-    logger.i("$response---${response.data}}");
-    return syncData(response);
+    final filePath = await fileUploadUrl(file.path);
+    if (filePath.isOk() && filePath.data?.isNotEmpty == true) {
+      String content = filePath.data!;
+      Response response = await getDio().post('index/Trends/addTrends',
+          data: _addCommonInfo({"content": content, "type": 2, "mt": second}));
+      logger.i("$response---${response.data}}");
+      return syncData(response);
+    }
   } catch (e) {
     logger.e("$e");
-    return errorBasePageData;
   }
+  return errorBasePageData;
 }
 
 Future<BasePageData> addTextTrends(String content) async {

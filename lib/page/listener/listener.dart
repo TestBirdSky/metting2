@@ -19,6 +19,7 @@ import '../../network/bean/topic_list_res.dart';
 import '../../widget/bottom_popup.dart';
 import '../../widget/dialog_person_info.dart';
 import '../../widget/image_m.dart';
+import '../call/call_bean.dart';
 
 class ListenerPage extends BaseUiPage<ListenerPageC> {
   ListenerPage() : super(title: "倾听者");
@@ -389,8 +390,13 @@ class _ItemView extends GetView<ListenerPageC> {
                 width: 35.h,
               ),
               onTap: () {
-                showDialogCreateVideoOrVoiceChatWithListener('${listenerRes
-                    .voiceCall}', '${listenerRes.videoCall}', listenerRes.uid ?? 0);
+                showDialogCreateVideoOrVoiceChatWithListener(
+                    '${listenerRes.voiceCall}',
+                    '${listenerRes.videoCall}',
+                    CallBean(
+                        userAvator: listenerRes.avatar ?? "",
+                        userName: listenerRes.cname ?? "",
+                        uid: listenerRes.uid ?? 0));
               },
             )
           ],

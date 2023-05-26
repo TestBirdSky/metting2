@@ -33,15 +33,20 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
   }
 
   Widget _title() {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: EdgeInsets.only(top: 90.h),
-        child: Text(
-          '正在呼叫...',
-          style: TextStyle(color: Colors.white, fontSize: 14.sp),
-        ),
-      ),
+    return GetBuilder<VideoChatController>(
+      id: 'title',
+      builder: (c) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.only(top: 90.h),
+            child: Text(
+              '正在呼叫...',
+              style: TextStyle(color: Colors.white, fontSize: 14.sp),
+            ),
+          ),
+        );
+      }
     );
   }
 
@@ -79,22 +84,22 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
     );
   }
 
-  var _isOpneVideo = true;
-  var _isOpneMirc = true;
+  var _isOpenVideo = true;
+  var _isOpenMirc = true;
 
   Widget _videoButton() {
     return StatefulBuilder(builder: (context, state) {
       return GestureDetector(
         onTap: () {
-          _isOpneVideo = !_isOpneVideo;
+          _isOpenVideo = !_isOpenVideo;
           state(() {});
-          engine.enableLocalVideo(_isOpneVideo);
+          engine.enableLocalVideo(_isOpenVideo);
           controller.update(['mineVideo']);
         },
         child: Column(
           children: [
             Image.asset(
-              getImagePath(_isOpneVideo ? "ic_video_on" : "ic_video_off"),
+              getImagePath(_isOpenVideo ? "ic_video_on" : "ic_video_off"),
               width: 44.h,
               height: 44.h,
             ),
@@ -108,14 +113,14 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
     return StatefulBuilder(builder: (context, state) {
       return GestureDetector(
         onTap: () {
-          _isOpneMirc = !_isOpneMirc;
+          _isOpenMirc = !_isOpenMirc;
           state(() {});
-          engine.enableLocalAudio(_isOpneMirc);
+          engine.enableLocalAudio(_isOpenMirc);
         },
         child: Column(
           children: [
             Image.asset(
-              getImagePath(_isOpneMirc ? "ic_mir_on" : "ic_mir_off"),
+              getImagePath(_isOpenMirc ? "ic_mir_on" : "ic_mir_off"),
               width: 44.h,
               height: 44.h,
             ),
@@ -161,9 +166,6 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           debugPrint("remote user $remoteUid joined");
           _updateRemoteUid(remoteUid);
-          // setState(() {
-          //   _remoteUid = remoteUid;
-          // });
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
@@ -186,7 +188,7 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
 
   bool _localUserJoined = false;
 
-  int? _remoteUid = null;
+  int? _remoteUid;
 
   Widget _mineVideo() {
     return Align(
@@ -199,7 +201,7 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
             id: 'mineVideo',
             builder: (c) {
               return Center(
-                child: _isOpneVideo && _localUserJoined
+                child: _isOpenVideo && _localUserJoined
                     ? AgoraVideoView(
                         controller: VideoViewController(
                           rtcEngine: engine,
@@ -244,4 +246,6 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
   }
 }
 
-class VideoChatController extends BaseController {}
+class VideoChatController extends BaseController {
+
+}

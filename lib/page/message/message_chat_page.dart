@@ -36,7 +36,26 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
 
   List<Widget> _getItem() {
     final list = <Widget>[];
+    list.add(Text('data'));
     return list;
+  }
+
+  Widget _itemLeft() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+
+      ],
+    );
+  }
+
+  Widget _itemRight(){
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+
+      ],
+    );
   }
 
   Widget _bottomWidget() {
@@ -52,4 +71,11 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
   MessageChatController initController() => MessageChatController();
 }
 
-class MessageChatController extends BaseController {}
+class MessageChatController extends BaseController {
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+}

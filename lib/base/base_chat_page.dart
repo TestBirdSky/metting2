@@ -16,7 +16,6 @@ abstract class BaseChatPage<T> extends BaseStatelessPage<T> {
 // 初始化应用
   Future<void> _initAgora() async {
     // 获取权限
-    await [Permission.microphone].request();
     // 创建 RtcEngine
     engine = await createAgoraRtcEngine();
     await engine.initialize(const RtcEngineContext(

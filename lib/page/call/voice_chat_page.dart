@@ -1,7 +1,9 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/widget/image_m.dart';
 
 import '../../base/BaseController.dart';
 import '../../base/base_chat_page.dart';
@@ -19,10 +21,7 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
   @override
   Widget createBody(BuildContext context) {
     return Stack(
-      children: [
-
-        _bottomBtn()
-      ],
+      children: [_widgetPersonIcon(), _topInfo(), _bottomBtn()],
     );
   }
 
@@ -100,7 +99,7 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
   }
 
   var _isOpenHF = false;
-  var _isOpneMirc = true;
+  var _isOpenMirc = true;
 
   Widget _hfButton() {
     return StatefulBuilder(builder: (context, state) {
@@ -126,13 +125,13 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
     return StatefulBuilder(builder: (context, state) {
       return GestureDetector(
         onTap: () {
-          _isOpneMirc = !_isOpneMirc;
+          _isOpenMirc = !_isOpenMirc;
           state(() {});
         },
         child: Column(
           children: [
             Image.asset(
-              getImagePath(_isOpneMirc ? "ic_mir_on" : "ic_mir_off"),
+              getImagePath(_isOpenMirc ? "ic_mir_on" : "ic_mir_off"),
               width: 44.h,
               height: 44.h,
             ),
@@ -146,6 +145,68 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
     engine.leaveChannel();
     Get.back();
   }
+
+  Widget _widgetPersonIcon() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        height: 248.w,
+        width: 248.w,
+        margin: EdgeInsets.only(top: 120.h),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+              getImagePath(
+                'ic_red_circle',
+              ),
+              fit: BoxFit.fill,
+              width: 248.w,
+              height: 248.w,
+            ),
+            Padding(
+              padding: EdgeInsets.all(0.h),
+              child: ClipOval(
+                child: Container(
+                  width: 115.w,
+                  height: 115.w,
+                  padding: EdgeInsets.all(1.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      // PersonInfoDialog().showInfoDialog(controller.mineInfo!);
+                    },
+                    child:
+                        circleNetworkWidget(callBean.userAvator, 108.w, 108.w),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _topInfo() {
+    return GetBuilder<VoiceChatController>(
+        id: 'title',
+        builder: (c) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 90.h),
+              child: Text(
+                c.getTitle(),
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
+            ),
+          );
+        });
+  }
 }
 
-class VoiceChatController extends BaseController {}
+class VoiceChatController extends BaseController {
+  String getTitle() {
+    return "正在呼叫...";
+  }
+}

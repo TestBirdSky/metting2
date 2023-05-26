@@ -196,4 +196,6 @@ class MessagePageC extends BaseController {
       update(['switch']);
     }
   }
+
+
 }

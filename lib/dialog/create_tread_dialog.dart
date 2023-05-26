@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/network/http_helper.dart';
+import 'package:metting/tool/record_helper.dart';
 import 'package:metting/tool/view_tools.dart';
 import 'package:metting/widget/loading.dart';
 import 'package:metting/widget/my_toast.dart';
@@ -15,6 +18,7 @@ class CreateTreadDialog {
   String _voiceCTips = "长按开始录入语音";
   bool _isCollectVoice = false;
   bool _isCanPutTread = false;
+  File? audioFile;
 
   void _setInputListener() {
     _controllerInput.addListener(() {
@@ -32,7 +36,7 @@ class CreateTreadDialog {
   void showDialog() {
     _setInputListener();
     Get.dialog(
-      // barrierColor: const Color(0x00000000),
+        // barrierColor: const Color(0x00000000),
         barrierDismissible: false,
         useSafeArea: false,
         Padding(
@@ -66,8 +70,7 @@ class CreateTreadDialog {
                       height: 155.h,
                       decoration: BoxDecoration(
                           color: Colors.black,
-                          border: Border.all(
-                              color: Colors.white, width: 1.5.w),
+                          border: Border.all(color: Colors.white, width: 1.5.w),
                           borderRadius: BorderRadius.all(Radius.circular(8.w))),
                       child: _itemIndex == 0
                           ? _inputTextTread()
@@ -85,10 +88,10 @@ class CreateTreadDialog {
                           border: Border.all(
                               color: Color(0xFF8F3947), width: 1.5.w),
                           borderRadius:
-                          BorderRadius.all(Radius.circular(36.w))),
+                              BorderRadius.all(Radius.circular(36.w))),
                       child: Row(
-                        children: _widget(),
                         mainAxisAlignment: MainAxisAlignment.center,
+                        children: _widget(),
                       ),
                     )
                   ],
@@ -102,7 +105,7 @@ class CreateTreadDialog {
   Widget _inputTextTread() {
     return Container(
       height: 128.h,
-      padding: EdgeInsets.symmetric(vertical:6.h,horizontal: 12.w),
+      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
       decoration: BoxDecoration(
           color: Color(0xffCFCFCF),
           borderRadius: BorderRadius.all(Radius.circular(5.w))),
@@ -147,9 +150,9 @@ class CreateTreadDialog {
           fontSize: 14.sp,
           color: Colors.white,
         ),
-        enabledBorder: UnderlineInputBorder(
+        enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Color(0x00FEC693), width: 0)),
-        focusedBorder: UnderlineInputBorder(
+        focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Color(0x00FEC693), width: 0)),
       ),
       controller: _controllerInput,
@@ -163,6 +166,7 @@ class CreateTreadDialog {
           if (_itemIndex != 0) {
             _itemIndex = 0;
             _dialogState(() {});
+            _setCanPutTread(_controllerInput.text.isNotEmpty);
           }
         },
         child: _viewBtn(
@@ -175,21 +179,25 @@ class CreateTreadDialog {
           if (_itemIndex != 1) {
             _itemIndex = 1;
             _dialogState(() {});
+            audioFile?.length().then((value) => _setCanPutTread(value > 0));
           }
         },
         onLongPress: () {
           if (_itemIndex == 1) {
             _isCollectVoice = true;
+            RecordAudioHelper.startRecording()
+                .then((value) => audioFile = value);
           }
         },
         onLongPressCancel: () {
           _isCollectVoice = false;
+          RecordAudioHelper.stopRecording();
         },
         child: _viewBtn(getImagePath(_isCollectVoice
             ? "ic_tread_voice_collect"
             : _itemIndex == 1
-            ? "ic_tread_voice_selected"
-            : "ic_tread_voice_unselected"))));
+                ? "ic_tread_voice_selected"
+                : "ic_tread_voice_unselected"))));
     widget.add(GestureDetector(
         onTap: () {
           if (_isCanPutTread) {
@@ -205,7 +213,7 @@ class CreateTreadDialog {
     return Expanded(
       flex: 1,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal:10.w),
+        margin: EdgeInsets.symmetric(horizontal: 10.w),
         width: 100.h,
         height: 100.h,
         child: Image.asset(
@@ -220,6 +228,16 @@ class CreateTreadDialog {
     if (_itemIndex == 0) {
       LoadingUtils.showSaveLoading();
       final data = await addTextTrends(_controllerInput.text.toString());
+      if (data.isOk()) {
+        MyToast.show('发布成功');
+        Get.back();
+      } else {
+        MyToast.show('发布失败');
+      }
+      LoadingUtils.dismiss();
+    } else if (audioFile != null) {
+      LoadingUtils.showSaveLoading();
+      final data = await addVoiceTrends(audioFile!, 2);
       if (data.isOk()) {
         MyToast.show('发布成功');
         Get.back();

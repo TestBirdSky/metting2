@@ -4,5 +4,11 @@ class CallBean {
 
   String userAvator;
   String userName;
+  String? channelId;
   num uid;
+  int callType = 2;
 }
+
+// enum CallType {
+//
+// }
