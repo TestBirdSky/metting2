@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
 import 'package:metting/page/message/message.dart';
+import 'package:metting/page/message/message_bean.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../base/BaseStatelessPage.dart';
@@ -44,26 +45,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
   MessageListController initController() => MessageListController();
 
   List<Widget> listWidget() {
-    List<Widget> child = [
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-      _item(),
-    ];
+    List<Widget> child = [];
     child.add(Padding(
       padding: EdgeInsets.only(bottom: 40.h),
       child: Text(''),
@@ -71,7 +53,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
     return child;
   }
 
-  Widget _item() {
+  Widget _item(MessageBean bean) {
     return slidableWithDelete(
         GestureDetector(
           onTap: () {},
@@ -80,7 +62,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
             child: Row(
               children: [
-                cardNetworkImage("url", 50.h, 50.h),
+                cardNetworkImage(bean.avator??"", 50.h, 50.h),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
@@ -93,7 +75,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
                             child: Text(''),
                           ),
                           Text(
-                            'name',
+                            '${bean.name}',
                             maxLines: 1,
                             style:
                                 TextStyle(color: Colors.white, fontSize: 14.sp),
@@ -132,5 +114,6 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
 }
 
 class MessageListController extends BaseController {
+  List<MessageBean> messageBean = [];
 
 }

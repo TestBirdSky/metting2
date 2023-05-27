@@ -41,14 +41,26 @@ class EmcHelper {
   }
 
   //获取本地会话消息
-  static Future<void> getAllMessage() async {
+  static Future<List<MessageBean>> getAllConversationsMessage() async {
     final conversations =
         await EMClient.getInstance.chatManager.loadAllConversations();
     List<MessageBean> msgBeanList = [];
     for (var element in conversations) {
-      final bean=MessageBean();
-      // bean.newMsg= (await element.latestMessage()).from;
-      // msgBeanList.add(element.id);
+      final bean = MessageBean();
+      bean.newMsg = await element.latestMessage();
+      bean.unReadCount = await element.unreadCount();
+      setMessageBeanUserInfo(bean,element.id);
+      msgBeanList.add(bean);
+    }
+    return msgBeanList;
+  }
+
+  static Future<void> setMessageBeanUserInfo(
+      MessageBean bean, String id) async {
+    final userInfo = await fetchUserInfo(id);
+    if (userInfo != null) {
+      bean.avator = userInfo.avatarUrl;
+      bean.name=userInfo.nickName;
     }
   }
 
