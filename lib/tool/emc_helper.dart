@@ -6,7 +6,7 @@ class EmcHelper {
   static Future<void> initSDK() async {
     EMOptions options = EMOptions(
       appKey: "1100230401164364#demo",
-      autoLogin: false,
+      autoLogin: true,
     );
     await EMClient.getInstance.init(options);
     // 通知sdk ui已经准备好，执行后才会收到`EMChatRoomEventHandler`, `EMContactEventHandler`, `EMGroupEventHandler` 回调。
@@ -15,10 +15,11 @@ class EmcHelper {
 
   static Future<void> signIn(String _userId, String token) async {
     try {
-      await EMClient.getInstance.login(_userId, token, false);
-      _addLogToConsole("sign in succeed, username: $_userId");
+      await EMClient.getInstance.login(_userId, token, true);
+      _addLogToConsole("sign in succeed, username: $_userId--$token");
     } on EMError catch (e) {
-      _addLogToConsole("sign in failed, e: ${e.code} , ${e.description}");
+      _addLogToConsole(
+          "sign in failed, e: ${e.code} , ${e.description} $_userId--$token");
     }
   }
 
@@ -36,31 +37,46 @@ class EmcHelper {
     logger.e(msg);
   }
 
-  static Future<void> getAllMessageFromServer() async {
-    EMClient.getInstance.chatManager.getConversationsFromServer();
+  //
+  // static Future<List<EMConversation>> getAllMessageFromServer() async {
+  //   return EMClient.getInstance.chatManager.getConversationsFromServer();
+  // }
+
+  static Future<EMConversation?> getConversationMessage(
+      int targetUid, int minUid) async {
+    return await EMClient.getInstance.chatManager
+        .getConversation("${targetUid}conId");
   }
 
   //获取本地会话消息
-  static Future<List<MessageBean>> getAllConversationsMessage() async {
-    final conversations =
-        await EMClient.getInstance.chatManager.loadAllConversations();
+  static Future<List<MessageBean>> getAllConversationsMessage({
+    int pageNum = 1,
+    int pageSize = 30,
+  }) async {
+    List<EMConversation> conversations = await EMClient.getInstance.chatManager
+        .fetchConversationListFromServer();
+    if (conversations.isEmpty) {
+      conversations =
+          await EMClient.getInstance.chatManager.loadAllConversations();
+    }
     List<MessageBean> msgBeanList = [];
     for (var element in conversations) {
       final bean = MessageBean();
       bean.newMsg = await element.latestMessage();
       bean.unReadCount = await element.unreadCount();
-      setMessageBeanUserInfo(bean,element.id);
+      _setMessageBeanUserInfo(bean, element.id);
       msgBeanList.add(bean);
     }
     return msgBeanList;
   }
 
-  static Future<void> setMessageBeanUserInfo(
+  static Future<void> _setMessageBeanUserInfo(
       MessageBean bean, String id) async {
     final userInfo = await fetchUserInfo(id);
     if (userInfo != null) {
+      logger.i("userInfo--->${userInfo.userId} -->${userInfo.avatarUrl}");
       bean.avator = userInfo.avatarUrl;
-      bean.name=userInfo.nickName;
+      bean.name = userInfo.nickName;
     }
   }
 
@@ -183,17 +199,31 @@ class EmcHelper {
     );
   }
 
-  void _sendMessage(String chatId, String msgContent) async {
-    // if (_chatId.isEmpty || _messageContent.isEmpty) {
-    //   _addLogToConsole("single chat id or message content is null");
-    //   return;
-    // }
-    var msg = EMMessage.createTxtSendMessage(
-      targetId: chatId,
-      content: msgContent,
-    );
+  static void sendTxtMessage(String chatId, String msgContent) async {
+    var msg =
+        EMMessage.createTxtSendMessage(targetId: chatId, content: msgContent);
+
     final message = await EMClient.getInstance.chatManager.sendMessage(msg);
-    var msg1 = EMMessage.createVoiceSendMessage(
-        targetId: chatId, filePath: msgContent);
+    logger.i(message);
+    EMClient.getInstance.chatManager.addMessageEvent(
+        // ChatMessageEvent 对应的 key。
+        message.msgId,
+        ChatMessageEvent(
+          onSuccess: (msgId, msg) {
+            _addLogToConsole("send message succeed$msg");
+            EMClient.getInstance.chatManager.removeMessageEvent(message.msgId);
+          },
+          onProgress: (msgId, progress) {
+            _addLogToConsole("send message onProgress $progress");
+          },
+          onError: (msgId, msg, error) {
+            EMClient.getInstance.chatManager.removeMessageEvent(message.msgId);
+            _addLogToConsole(
+              "send message failed, code: ${error.code}, desc: ${error.description}",
+            );
+          },
+        ));
+    // var msg1 = EMMessage.createVoiceSendMessage(
+    //     targetId: chatId, filePath: msgContent);
   }
 }

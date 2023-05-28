@@ -77,14 +77,13 @@ Future<BasePageData<LoginResponse?>> loginPhone(
 
 Future<BasePageData> autoLogin() async {
   try {
-    logger.e("message autoLogin");
     final token = getEmToken();
     final userId = getMineUID();
     logger.e("message$token---$userId");
     if (token.isEmpty || userId == -1) {
       return BasePageData(-1, "", null);
     }
-    await EMClient.getInstance.login("$userId", token, false);
+    await EMClient.getInstance.login("$userId", token, true);
     return BasePageData(respCodeSuccess, "", null);
   } on EMError catch (e) {
     logger.e("message$e");

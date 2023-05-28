@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
 import 'package:metting/page/message/message.dart';
 import 'package:metting/page/message/message_bean.dart';
+import 'package:metting/page/message/message_chat_page.dart';
+import 'package:metting/tool/emc_helper.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../base/BaseStatelessPage.dart';
@@ -24,9 +26,9 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
             // Viewport不满一屏时,禁用上拉加载更多功能,应该配置更灵活一些，比如说一页条数大于等于总条数的时候设置或者总条数等于0
             hideFooterWhenNotFull: true,
             child: SmartRefresher(
-              enablePullDown: false,
+              enablePullDown: true,
               enablePullUp: true,
-              header: const MyClassicHeader(),
+              header: const NUllTipsClassicHeader(),
               footer: const MyClassicFooter(),
               // 配置默认底部指示器
               controller: mRefreshController,
@@ -46,6 +48,9 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
 
   List<Widget> listWidget() {
     List<Widget> child = [];
+    for (var element in controller.messageBean) {
+      child.add(_item(element));
+    }
     child.add(Padding(
       padding: EdgeInsets.only(bottom: 40.h),
       child: Text(''),
@@ -54,15 +59,20 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
   }
 
   Widget _item(MessageBean bean) {
-    return slidableWithDelete(
-        GestureDetector(
-          onTap: () {},
-          child: Container(
+    return GestureDetector(
+      onTap: () {
+        Get.to(MessageChatPage(
+          title: bean.name ?? "",
+          uid: bean.uid,
+        ));
+      },
+      child: slidableWithDelete(
+          Container(
             height: 66.h,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
             child: Row(
               children: [
-                cardNetworkImage(bean.avator??"", 50.h, 50.h),
+                cardNetworkImage(bean.avator ?? "", 50.h, 50.h),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
@@ -84,7 +94,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
                             height: 4.h,
                           ),
                           Text(
-                            '聊天消息',
+                            bean.getShowMsg(),
                             maxLines: 1,
                             style:
                                 TextStyle(color: Colors.white, fontSize: 12.sp),
@@ -98,22 +108,56 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
                   ),
                 ),
                 Text(
-                  '1分钟',
+                  bean.getShowTime(),
                   style: TextStyle(color: Colors.white, fontSize: 14.sp),
                 ),
               ],
             ),
           ),
-        ),
-        (context) {});
+          (context) {}),
+    );
   }
 
-  void onRefresh() {}
+  void onRefresh() {
+    controller.refreshData(mRefreshController);
+  }
 
-  void onLoad() {}
+  void onLoad() {
+    controller.loadData(mRefreshController);
+  }
 }
 
 class MessageListController extends BaseController {
   List<MessageBean> messageBean = [];
+  int pageNum = 1;
 
+  @override
+  void onInit() {
+    super.onInit();
+    refreshData(null);
+  }
+
+  void refreshData(RefreshController? refreshController) async {
+    pageNum = 1;
+    final list = await EmcHelper.getAllConversationsMessage(pageNum: pageNum);
+    refreshController?.refreshCompleted();
+    if (list.isNotEmpty) {
+      messageBean.addAll(list);
+      update(['list']);
+    }
+  }
+
+  void loadData(RefreshController refreshController) async {
+    pageNum++;
+    final list = await EmcHelper.getAllConversationsMessage(pageNum: pageNum);
+    if (list.length < 30) {
+      refreshController.loadNoData();
+    } else {
+      refreshController.loadComplete();
+    }
+    if (list.isNotEmpty) {
+      messageBean.addAll(list);
+      update(['list']);
+    }
+  }
 }

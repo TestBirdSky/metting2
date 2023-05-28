@@ -72,8 +72,8 @@ dependencies:
   path_provider: ^2.0.15
   #声网 音视频聊天
   agora_rtc_engine: ^6.1.1
-  #内购
-  flutter_inapp_purchase: ^5.4.1
+#  #内购
+#  flutter_inapp_purchase: ^5.4.1
 
 dev_dependencies:
   flutter_test:

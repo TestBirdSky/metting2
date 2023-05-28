@@ -5,15 +5,18 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:metting/base/BaseController.dart';
+import 'package:metting/base/BaseStatelessPage.dart';
 import 'package:metting/base/base_chat_page.dart';
+import 'package:metting/tool/log.dart';
 import 'package:metting/tool/view_tools.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
+import '../../base/base_chat_controller.dart';
 import '../../tool/agora_helper.dart';
 import 'call_bean.dart';
 
-class VideoChatPage extends BaseChatPage<VideoChatController> {
+class VideoChatPage extends BaseStatelessPage<VideoChatController> {
   VideoChatPage({
     required this.callBean,
   });
@@ -34,20 +37,19 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
 
   Widget _title() {
     return GetBuilder<VideoChatController>(
-      id: 'title',
-      builder: (c) {
-        return Align(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: EdgeInsets.only(top: 90.h),
-            child: Text(
-              '正在呼叫...',
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
+        id: 'title',
+        builder: (c) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 90.h),
+              child: Text(
+                '正在呼叫...',
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
             ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 
   Widget _bottomBtn() {
@@ -84,22 +86,18 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
     );
   }
 
-  var _isOpenVideo = true;
-  var _isOpenMirc = true;
-
   Widget _videoButton() {
     return StatefulBuilder(builder: (context, state) {
       return GestureDetector(
         onTap: () {
-          _isOpenVideo = !_isOpenVideo;
+          controller.changeVideoStatus();
           state(() {});
-          engine.enableLocalVideo(_isOpenVideo);
-          controller.update(['mineVideo']);
         },
         child: Column(
           children: [
             Image.asset(
-              getImagePath(_isOpenVideo ? "ic_video_on" : "ic_video_off"),
+              getImagePath(
+                  controller.isOpenVideo ? "ic_video_on" : "ic_video_off"),
               width: 44.h,
               height: 44.h,
             ),
@@ -113,14 +111,13 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
     return StatefulBuilder(builder: (context, state) {
       return GestureDetector(
         onTap: () {
-          _isOpenMirc = !_isOpenMirc;
+          controller.changeMircStatus();
           state(() {});
-          engine.enableLocalAudio(_isOpenMirc);
         },
         child: Column(
           children: [
             Image.asset(
-              getImagePath(_isOpenMirc ? "ic_mir_on" : "ic_mir_off"),
+              getImagePath(controller.isOpenMirc ? "ic_mir_on" : "ic_mir_off"),
               width: 44.h,
               height: 44.h,
             ),
@@ -131,64 +128,11 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
   }
 
   void _onBack() {
-    engine.disableVideo();
-    engine.disableAudio();
-    engine.leaveChannel();
     Get.back();
   }
 
   @override
-  VideoChatController initController() => VideoChatController();
-
-  @override
-  void initAgoraFinish() async {
-    await [Permission.microphone, Permission.camera].request();
-    _registerEventHandler();
-    await engine.enableVideo();
-    await engine.startPreview();
-    // 加入频道，设置用户角色为主播
-    await engine.joinChannel(
-      token: token,
-      channelId: channel,
-      options: const ChannelMediaOptions(
-          clientRoleType: ClientRoleType.clientRoleBroadcaster),
-      uid: 0,
-    );
-  }
-
-  void _registerEventHandler() {
-    engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("local user ${connection.localUid} joined");
-          _localUser(true);
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("remote user $remoteUid joined");
-          _updateRemoteUid(remoteUid);
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          debugPrint("remote user $remoteUid left channel");
-          _updateRemoteUid(null);
-        },
-      ),
-    );
-  }
-
-  void _updateRemoteUid(int? uid) {
-    _remoteUid = null;
-    controller.update(['video']);
-  }
-
-  void _localUser(bool isJoined) {
-    _localUserJoined = isJoined;
-    controller.update(['mineVideo']);
-  }
-
-  bool _localUserJoined = false;
-
-  int? _remoteUid;
+  VideoChatController initController() => VideoChatController(callBean);
 
   Widget _mineVideo() {
     return Align(
@@ -201,11 +145,11 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
             id: 'mineVideo',
             builder: (c) {
               return Center(
-                child: _isOpenVideo && _localUserJoined
+                child: controller.isOpenVideo && controller.localUserJoined
                     ? AgoraVideoView(
                         controller: VideoViewController(
-                          rtcEngine: engine,
-                          canvas: const VideoCanvas(uid: 0),
+                          rtcEngine: controller.engine,
+                          canvas: VideoCanvas(uid: 0),
                         ),
                       )
                     : Container(
@@ -222,13 +166,13 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
       width: double.infinity,
       height: double.infinity,
       child: GetBuilder<VideoChatController>(
-          id: 'video',
+          id: 'remoteVideo',
           builder: (c) {
-            if (_remoteUid != null) {
+            if (c.remoteUid != null) {
               return AgoraVideoView(
                 controller: VideoViewController.remote(
-                  rtcEngine: engine,
-                  canvas: VideoCanvas(uid: _remoteUid),
+                  rtcEngine: c.engine,
+                  canvas: VideoCanvas(uid: c.remoteUid!),
                   connection: const RtcConnection(channelId: channel),
                 ),
               );
@@ -246,6 +190,63 @@ class VideoChatPage extends BaseChatPage<VideoChatController> {
   }
 }
 
-class VideoChatController extends BaseController {
+class VideoChatController extends BaseChatController {
+  VideoChatController(this.callBean);
 
+  late CallBean callBean;
+  bool isOpenVideo = true;
+  bool isOpenMirc = true;
+  bool localUserJoined = false;
+  int? remoteUid;
+  int? localUid;
+
+  void changeVideoStatus() {
+    isOpenVideo = !isOpenVideo;
+    engine.enableLocalVideo(isOpenVideo);
+    update(['mineVideo']);
+  }
+
+  void changeMircStatus() {
+    isOpenMirc = !isOpenMirc;
+    engine.enableLocalAudio(isOpenMirc);
+  }
+
+  @override
+  void initAgoraFinish() async {
+    await [Permission.microphone, Permission.camera].request();
+    await engine.enableVideo();
+    await engine.startPreview();
+    engine.joinChannel(
+      // token: callBean.token,
+      // channelId: callBean.channelId,
+      token: token,
+      channelId: channel,
+      options: const ChannelMediaOptions(
+          clientRoleType: ClientRoleType.clientRoleBroadcaster),
+      uid: 0,
+    );
+    logger.i('initAgoraFinish${callBean.token}--${callBean.channelId}');
+  }
+
+  @override
+  void onMineJoinChannelSuccess(RtcConnection connection, int elapsed) {
+    super.onMineJoinChannelSuccess(connection, elapsed);
+    localUid = connection.localUid;
+    localUserJoined = true;
+    update(['mineVideo']);
+  }
+
+  @override
+  void onUserJoinChannelSuccess(RtcConnection connection, int uid) {
+    super.onUserJoinChannelSuccess(connection, uid);
+    remoteUid = uid;
+    update(['remoteVideo']);
+  }
+
+  @override
+  void onUserOffline(RtcConnection connection, int uid) {
+    super.onUserOffline(connection, uid);
+    remoteUid = null;
+    update(['remoteVideo']);
+  }
 }

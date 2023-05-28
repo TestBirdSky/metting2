@@ -104,8 +104,14 @@ class GStorage {
 
   ///获取某个人的基本信息数据
   static UserDataRes? getMineUserBasic() {
-    final userBasicMap = _commonStorage.read('${getMineUID()}');
+    return getUserBasic(getMineUID());
+  }
+
+  ///获取某个人的基本信息数据
+  static UserDataRes? getUserBasic(int uid) {
+    final userBasicMap = _commonStorage.read('$uid');
     try {
+      logger.i("userBasicMap$userBasicMap --$uid");
       return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
     } catch (e) {
       logger.e("$e --$userBasicMap --${getMineUID()}");
@@ -113,21 +119,10 @@ class GStorage {
     }
   }
 
-  ///获取某个人的基本信息数据
-  static UserDataRes? getUserBasic(int uid) {
-    final userBasicMap = _commonStorage.read('$uid');
-    try {
-      logger.i(userBasicMap);
-      return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
-    } catch (e) {
-      logger.e(e);
-      return null;
-    }
-  }
-
   ///保存某个人的基本信息数据
   static Future<void> saveUserBasic(UserDataRes userBasic) {
-    return _commonStorage.write('${userBasic.uid}', userBasic);
+    logger.i('saveUserBasic ${userBasic.toJson()} --userBasic.uid${userBasic.uid}');
+    return _commonStorage.write('${userBasic.uid}', userBasic.toJson());
   }
 
   static int getVoicePrice() {

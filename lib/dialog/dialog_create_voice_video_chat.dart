@@ -18,7 +18,8 @@ void showDialogCreateVideoOrVoiceChatWithUser(
         LoadingUtils.showLoading();
         final data = await createVideoWithUser(callBean.uid);
         if (data.isOk()) {
-          callBean.channelId = data.data?.id;
+          callBean.channelId = data.data?.id ?? "";
+          callBean.token = data.data?.token ?? "";
           Get.to(VideoChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();
@@ -30,7 +31,8 @@ void showDialogCreateVideoOrVoiceChatWithUser(
         LoadingUtils.showLoading();
         final data = await createVoiceWithUser(callBean.uid);
         if (data.isOk()) {
-          callBean.channelId = data.data?.id;
+          callBean.channelId = data.data?.id ?? "";
+          callBean.token = data.data?.token ?? "";
           Get.to(VoiceChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();
@@ -51,7 +53,7 @@ void showDialogCreateVideoOrVoiceChatWithListener(
         LoadingUtils.showLoading();
         final data = await createVideoWithListener(callBean.uid);
         if (data.isOk()) {
-          callBean.channelId = data.data?.id;
+          callBean.channelId = data.data?.id ?? "";
           Get.to(VideoChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();
@@ -63,7 +65,7 @@ void showDialogCreateVideoOrVoiceChatWithListener(
         LoadingUtils.showLoading();
         final data = await createVoiceWithUser(callBean.uid);
         if (data.isOk()) {
-          callBean.channelId = data.data?.id;
+          callBean.channelId = data.data?.id ?? "";
           Get.to(VoiceChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();

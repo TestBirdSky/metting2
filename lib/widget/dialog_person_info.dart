@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/page/message/message_chat_page.dart';
 import 'package:metting/widget/loading.dart';
 import 'package:metting/widget/my_toast.dart';
 import 'package:metting/widget/null_widget.dart';
@@ -42,24 +43,39 @@ class PersonInfoDialog {
         ),
         child: Stack(
           children: [
-            // SizedBox(
-            //     height: 360.h,
-            //     child: CachedNetworkImage(
-            //       fit: BoxFit.cover,
-            //       imageUrl: info.avatar ?? "",
-            //     )),
-            // _listView(info),
             _refreshLayout(info),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {},
-                child: Image.asset(
-                  getImagePath('mine_phone'),
-                  width: 52.w,
-                  height: 52.w,
-                ),
-              ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+
+                        },
+                        child: Image.asset(
+                          getImagePath('mine_phone'),
+                          width: 52.w,
+                          height: 52.w,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(MessageChatPage(title: info.cname ?? "",uid: "${info.uid}",));
+                        },
+                        child: Image.asset(
+                          getImagePath('ic_message'),
+                          width: 52.w,
+                          height: 52.w,
+                        ),
+                      ),
+                    ],
+                  )),
             ),
           ],
         ),
@@ -139,7 +155,7 @@ class PersonInfoDialog {
         list.add(_itemText(treadBean));
       }
     }
-    if (list.isEmpty) list.add(NullWidget());
+    if (list.isEmpty) list.add(Container(height: 300.h, child: NullWidget()));
     return list;
   }
 

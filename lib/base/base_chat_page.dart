@@ -1,7 +1,5 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:metting/base/BaseStatelessPage.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 import '../tool/agora_helper.dart';
 
 abstract class BaseChatPage<T> extends BaseStatelessPage<T> {

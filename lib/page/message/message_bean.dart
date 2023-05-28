@@ -1,5 +1,7 @@
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 
+import '../../tool/date_utils.dart';
+
 class MessageBean {
   String? avator;
   String? name;
@@ -14,5 +16,13 @@ class MessageBean {
       return (body as EMTextMessageBody).content;
     }
     return "";
+  }
+
+  String getShowTime() {
+    return DateTools.getHomeMessageTime(newMsg?.serverTime ?? 0);
+  }
+
+  MessageStatus msgStatus() {
+    return newMsg?.status ?? MessageStatus.FAIL;
   }
 }

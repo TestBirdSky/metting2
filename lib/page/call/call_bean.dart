@@ -4,7 +4,8 @@ class CallBean {
 
   String userAvator;
   String userName;
-  String? channelId;
+  String channelId = "";
+  String token = "";
   num uid;
   int callType = 2;
 }

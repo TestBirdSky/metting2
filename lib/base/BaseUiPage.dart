@@ -7,7 +7,7 @@ import 'package:metting/base/BaseStatelessPage.dart';
 import '../core/common_configure.dart';
 
 abstract class BaseUiPage<T> extends BaseStatelessPage<T> {
-  final String title;
+  String title;
 
   BaseUiPage({super.key, required this.title});
 

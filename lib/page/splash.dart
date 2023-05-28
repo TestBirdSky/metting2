@@ -7,6 +7,7 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/network/http_helper.dart';
 import 'package:metting/page/home/home.dart';
 import 'package:metting/page/login/login.dart';
+import 'package:metting/tool/log.dart';
 import '../base/BaseController.dart';
 import '../base/BaseStatelessPage.dart';
 import '../core/common_configure.dart';
@@ -49,23 +50,24 @@ class SplashController extends BaseController {
 
   void _autoLogin() async {
     await GetStorage.init();
-    await _initSDK();
-    _eMAutoLogin;
+    await _initEMSDK();
     getChatLang();
-    Get.off(() => LoginPage());
   }
 
-  Future<void> _initSDK() async {
+  Future<void> _initEMSDK() async {
+    logger.i('SplashController _initEMSDK');
     EMOptions options = EMOptions(
       appKey: "1100230401164364#demo",
-      autoLogin: false,
+      autoLogin: true,
     );
     await EMClient.getInstance.init(options);
     // 通知sdk ui已经准备好，执行后才会收到`EMChatRoomEventHandler`, `EMContactEventHandler`, `EMGroupEventHandler` 回调。
     await EMClient.getInstance.startCallback();
+    _eMAutoLogin();
   }
 
-  Future<void> _eMAutoLogin() async {
+  void _eMAutoLogin() async {
+    logger.i('message _eMAutoLogin');
     final data = await autoLogin();
     if (data.isOk()) {
       Get.off(()=> MainPage());

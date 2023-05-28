@@ -177,6 +177,7 @@ class CreateTreadDialog {
         onTap: () {
           if (_itemIndex != 1) {
             _itemIndex = 1;
+            _dialogState(() {});
             _setCanPutTread(_recordAudioHelper?.isHaveRecordFile() == true);
           }
         },

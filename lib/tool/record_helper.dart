@@ -8,7 +8,7 @@ class RecordAudioHelper {
   final _mRecorder = FlutterSoundRecorder();
   bool _mRecorderIsInit = false;
   int recorderTime = 0;
-  int _startRecorderTime = 0;
+  int _startRecorderTimeMill = 0;
   File? recordAudioFile;
 
   bool isHaveRecordFile() {
@@ -20,7 +20,7 @@ class RecordAudioHelper {
     path ??= "${DateTime.now().millisecondsSinceEpoch}.mp4";
     deleteFile2(recordAudioFile);
     recorderTime = 0;
-    _startRecorderTime = DateTime.now().second;
+    _startRecorderTimeMill = DateTime.now().millisecondsSinceEpoch;
     await _mRecorder.startRecorder(toFile: path, codec: Codec.aacMP4);
   }
 
@@ -36,7 +36,7 @@ class RecordAudioHelper {
   Future<void> destroy() async {
     _mRecorder.closeRecorder();
     recorderTime = 0;
-    _startRecorderTime = 0;
+    _startRecorderTimeMill = 0;
     deleteFile2(recordAudioFile);
     recordAudioFile = null;
   }
@@ -49,8 +49,10 @@ class RecordAudioHelper {
     final s = await stopRecording();
     if (s != null) {
       recordAudioFile = File(s);
-      recorderTime = DateTime.now().second - _startRecorderTime;
-      logger.i('stopRecording1$s --$recorderTime');
+      recorderTime =
+          (DateTime.now().millisecondsSinceEpoch - _startRecorderTimeMill) ~/
+                  1000;
+      logger.i('stopRecording1$s --$recorderTime --${_startRecorderTimeMill}');
       return recordAudioFile;
     }
     recorderTime = 0;

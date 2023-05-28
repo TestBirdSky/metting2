@@ -25,7 +25,7 @@ import 'basic_info.dart';
 
 class LoginPage extends BaseStatelessPage<LoginC> {
   final TextEditingController _controllerPhone =
-  TextEditingController(text: getLastLoginAccount());
+      TextEditingController(text: getLastLoginAccount());
   final TextEditingController _controllerCode = TextEditingController();
 
   @override
@@ -328,7 +328,7 @@ class LoginPage extends BaseStatelessPage<LoginC> {
 
 class LoginC extends BaseController {
   var isSendSmsCode = false;
-  var isShowCodeLogin = false;
+  var isShowCodeLogin = true;
   var isCheckPrivacy = false;
 
   void getSmsCode(phone) async {
@@ -359,6 +359,7 @@ class LoginC extends BaseController {
     if (res.isOk() && res.data != null) {
       _next(res.data!);
       saveLoginAccount(phone);
+      saveEmToken(res.data?.token ?? "");
       GStorage.saveMessageNotificationStatus(res.data?.messagesReceiving == 0);
     } else {
       MyToast.show(res.msg);

@@ -37,6 +37,22 @@ abstract class BaseRefreshPage<T> extends BaseUiPage<T> {
 }
 
 ///刷新头
+class NUllTipsClassicHeader extends StatelessWidget {
+  const NUllTipsClassicHeader({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const ClassicHeader(
+      refreshingText: '',
+      releaseText: '',
+      idleText: '',
+      completeText: '',
+      failedText: '',
+    );
+  }
+}
+
+///刷新头
 class MyClassicHeader extends StatelessWidget {
   const MyClassicHeader({Key? key}) : super(key: key);
 

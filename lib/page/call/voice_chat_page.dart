@@ -5,12 +5,14 @@ import 'package:get/get.dart';
 import 'package:metting/widget/image_m.dart';
 
 import '../../base/BaseController.dart';
+import '../../base/BaseStatelessPage.dart';
+import '../../base/base_chat_controller.dart';
 import '../../base/base_chat_page.dart';
 import '../../tool/agora_helper.dart';
 import '../../tool/view_tools.dart';
 import 'call_bean.dart';
 
-class VoiceChatPage extends BaseChatPage<VoiceChatController> {
+class VoiceChatPage extends BaseStatelessPage<VoiceChatController> {
   VoiceChatPage({
     required this.callBean,
   });
@@ -25,43 +27,7 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
   }
 
   @override
-  void initAgoraFinish() async {
-    _registerEventHandler();
-    // 加入频道，设置用户角色为主播
-    await engine.joinChannel(
-      token: token,
-      channelId: channel,
-      options: const ChannelMediaOptions(
-          clientRoleType: ClientRoleType.clientRoleBroadcaster),
-      uid: 0,
-    );
-  }
-
-  void _registerEventHandler() {
-    engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("local user ${connection.localUid} joined");
-          // _localUser(true);
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("remote user $remoteUid joined");
-          // _updateRemoteUid(remoteUid);
-          // setState(() {
-          //   _remoteUid = remoteUid;
-          // });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          debugPrint("remote user $remoteUid left channel");
-          // _updateRemoteUid(null);
-        },
-      ),
-    );
-  }
-
-  @override
-  VoiceChatController initController() => VoiceChatController();
+  VoiceChatController initController() => VoiceChatController(callBean);
 
   Widget _bottomBtn() {
     return Align(
@@ -141,7 +107,6 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
   }
 
   void _onBack() {
-    engine.leaveChannel();
     Get.back();
   }
 
@@ -204,8 +169,22 @@ class VoiceChatPage extends BaseChatPage<VoiceChatController> {
   }
 }
 
-class VoiceChatController extends BaseController {
+class VoiceChatController extends BaseChatController {
+  VoiceChatController(this.callBean);
+  late CallBean callBean;
+
   String getTitle() {
     return "正在呼叫...";
+  }
+
+  @override
+  void initAgoraFinish() {
+    engine.joinChannel(
+      token: callBean.token,
+      channelId: callBean.channelId,
+      options: const ChannelMediaOptions(
+          clientRoleType: ClientRoleType.clientRoleBroadcaster),
+      uid: 0,
+    );
   }
 }
