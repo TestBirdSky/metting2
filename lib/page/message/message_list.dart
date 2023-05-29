@@ -19,7 +19,7 @@ class MessageListPage extends BaseStatelessPage<MessageListController> {
 
   @override
   Widget createBody(BuildContext context) {
-    return GetBuilder<MessagePageC>(
+    return GetBuilder<MessageListController>(
         id: 'list',
         builder: (c) {
           return RefreshConfiguration(
@@ -140,24 +140,25 @@ class MessageListController extends BaseController {
   void refreshData(RefreshController? refreshController) async {
     pageNum = 1;
     final list = await EmcHelper.getAllConversationsMessage(pageNum: pageNum);
-    refreshController?.refreshCompleted();
+    messageBean.clear();
     if (list.isNotEmpty) {
       messageBean.addAll(list);
       update(['list']);
     }
+    refreshController?.refreshCompleted();
   }
 
   void loadData(RefreshController refreshController) async {
     pageNum++;
     final list = await EmcHelper.getAllConversationsMessage(pageNum: pageNum);
+    if (list.isNotEmpty) {
+      messageBean.addAll(list);
+      update(['list']);
+    }
     if (list.length < 30) {
       refreshController.loadNoData();
     } else {
       refreshController.loadComplete();
-    }
-    if (list.isNotEmpty) {
-      messageBean.addAll(list);
-      update(['list']);
     }
   }
 }

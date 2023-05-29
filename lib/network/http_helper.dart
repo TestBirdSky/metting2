@@ -87,6 +87,9 @@ Future<BasePageData> autoLogin() async {
     return BasePageData(respCodeSuccess, "", null);
   } on EMError catch (e) {
     logger.e("message$e");
+    if (e.code == 218||e.code==200) {
+      return BasePageData(respCodeSuccess, "", null);
+    }
     return BasePageData(e.code, e.description, null);
   }
 }
@@ -545,6 +548,11 @@ Future<BasePageData<ChatIdBean?>> createVideoWithListener(num userid) async {
 Future<BasePageData<ChatIdBean?>> _createRecord(
     num userid, int type, int clazz) async {
   try {
+    if (getMineUID() == 164034) {
+      userid = 164035;
+    } else {
+      userid = 164034;
+    }
     Response response = await getDio().post('index/Call/createRecord',
         data: _addCommonInfo({'userid': userid, "type": type, "class": clazz}));
     return syncData<ChatIdBean>(response);

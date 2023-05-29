@@ -217,10 +217,10 @@ class VideoChatController extends BaseChatController {
     await engine.enableVideo();
     await engine.startPreview();
     engine.joinChannel(
-      // token: callBean.token,
-      // channelId: callBean.channelId,
-      token: token,
-      channelId: channel,
+      token: callBean.token,
+      channelId: callBean.channelId,
+      // token: token,
+      // channelId: channel,
       options: const ChannelMediaOptions(
           clientRoleType: ClientRoleType.clientRoleBroadcaster),
       uid: 0,

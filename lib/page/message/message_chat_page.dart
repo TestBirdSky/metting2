@@ -1,6 +1,3 @@
-import 'dart:ffi';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,7 +5,9 @@ import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/base/BaseController.dart';
 import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/database/get_storage_manager.dart';
+import 'package:metting/network/bean/user_data_res.dart';
 import 'package:metting/tool/emc_helper.dart';
+import 'package:metting/widget/image_m.dart';
 
 import '../../core/common_configure.dart';
 import '../../network/http_helper.dart';
@@ -48,21 +47,113 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
 
   List<Widget> _getItem() {
     final list = <Widget>[];
-    list.add(Text('data'));
+    for (var element in controller.listMessage) {
+      list.add(_messageClass(element));
+    }
     return list;
   }
 
-  Widget _itemLeft() {
+  Widget _messageClass(EMMessage msg) {
+    Widget widget;
+    switch (msg.body.type) {
+      case MessageType.TXT:
+        {
+          EMTextMessageBody body = msg.body as EMTextMessageBody;
+          if (msg.from == uid) {
+            widget = _itemRight(body.content);
+          } else {
+            widget = _itemRight(body.content);
+          }
+        }
+        break;
+      default:
+        {
+          widget = Text('');
+        }
+    }
+    return widget;
+  }
+
+  Widget _itemTextLeft(String content) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [],
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        circleNetworkWidget("${controller.mUserData?.avatar}", 36.h, 36.h),
+        SizedBox(
+          width: 6.w,
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+          decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.all(Radius.circular(5.w))),
+          child: Text(
+            content,
+            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          width: 30.w,
+        ),
+      ],
     );
   }
 
-  Widget _itemRight() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [],
+  final contentWidth = (ScreenUtil().screenWidth - 60.w);
+
+  Widget _itemRight(String content) {
+    return Container(
+      padding: EdgeInsets.only(right: 12.w, bottom: 10.h),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                textDirection: TextDirection.rtl,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxWidth: contentWidth, minHeight: 40.h),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 6.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(5.w))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            content,
+                            style: TextStyle(
+                                fontSize: 15.sp, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 6.w,
+          ),
+          SizedBox(
+            height: 46.h,
+            width: 46.h,
+            child: circleNetworkWidget(
+                "${controller.mUserData?.avatar}", 46.h, 46.h),
+          )
+        ],
+      ),
     );
   }
 
@@ -113,7 +204,9 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
                 borderRadius: BorderRadius.all(Radius.circular(12.w))),
             child: TextButton(
                 onPressed: () {
-                  controller.sendTextMessage("msg${DateTime.now().second}");
+                  final text = _controller.text;
+                  controller.sendTextMessage(text);
+                  _controller.clear();
                 },
                 child: Text(
                   '发 送',
@@ -130,22 +223,28 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
 
   @override
   Widget? titleWidget() {
-    Text(
-      title,
-      style: TextStyle(color: C.whiteFFFFFF, fontSize: 18.sp),
-    );
-    return super.titleWidget();
+    return GetBuilder<MessageChatController>(
+        id: "title",
+        builder: (c) {
+          return Text(
+            controller.mUserData?.cname ?? title,
+            style: TextStyle(color: C.whiteFFFFFF, fontSize: 18.sp),
+          );
+        });
   }
 }
 
 class MessageChatController extends BaseController {
   MessageChatController(this.uid);
 
+  List<EMMessage> listMessage = [];
   late String uid;
+  String minUid = getMineUID().toString();
 
   String userId = "164034";
   String userId2 = "164035";
   EMConversation? emConversation;
+  UserDataRes? mUserData;
 
   @override
   void onInit() {
@@ -155,15 +254,30 @@ class MessageChatController extends BaseController {
   }
 
   void sendTextMessage(String msg) async {
-    await sendMsg(msg, uid);
-    EmcHelper.sendTxtMessage(uid, msg);
+    final mesage = await EmcHelper.sendTxtMessage(uid, msg);
+    listMessage.insert(0, mesage);
+    update(['content']);
+    sendMsg(msg, uid);
   }
 
-  void _getUserInfo() async {}
+  void _getUserInfo() async {
+    mUserData = (await getUserData(int.parse(uid))).data;
+    update(['title']);
+  }
 
   void createOrGetConversation() async {
     emConversation =
         await EmcHelper.getConversationMessage(int.parse(uid), getMineUID());
-
+    getMessage();
   }
+
+  void getMessage() async {
+    final list = await emConversation?.loadMessages(startMsgId: '') ?? [];
+    if (list.isNotEmpty) {
+      listMessage.addAll(list);
+      update(['content']);
+    }
+  }
+
+  void loadMessage() async {}
 }

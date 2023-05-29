@@ -8,6 +8,7 @@ class EmcHelper {
       appKey: "1100230401164364#demo",
       autoLogin: true,
     );
+    options.enableAPNs('certName');
     await EMClient.getInstance.init(options);
     // 通知sdk ui已经准备好，执行后才会收到`EMChatRoomEventHandler`, `EMContactEventHandler`, `EMGroupEventHandler` 回调。
     await EMClient.getInstance.startCallback();
@@ -45,7 +46,7 @@ class EmcHelper {
   static Future<EMConversation?> getConversationMessage(
       int targetUid, int minUid) async {
     return await EMClient.getInstance.chatManager
-        .getConversation("${targetUid}conId");
+        .getConversation("${minUid}conId");
   }
 
   //获取本地会话消息
@@ -60,6 +61,7 @@ class EmcHelper {
           await EMClient.getInstance.chatManager.loadAllConversations();
     }
     List<MessageBean> msgBeanList = [];
+    logger.i('conversations size->${conversations.length}');
     for (var element in conversations) {
       final bean = MessageBean();
       bean.newMsg = await element.latestMessage();
@@ -199,10 +201,12 @@ class EmcHelper {
     );
   }
 
-  static void sendTxtMessage(String chatId, String msgContent) async {
+  static Future<EMMessage> sendTxtMessage(
+    String chatId,
+    String msgContent,
+  ) async {
     var msg =
         EMMessage.createTxtSendMessage(targetId: chatId, content: msgContent);
-
     final message = await EMClient.getInstance.chatManager.sendMessage(msg);
     logger.i(message);
     EMClient.getInstance.chatManager.addMessageEvent(
@@ -223,7 +227,6 @@ class EmcHelper {
             );
           },
         ));
-    // var msg1 = EMMessage.createVoiceSendMessage(
-    //     targetId: chatId, filePath: msgContent);
+    return message;
   }
 }

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/database/get_storage_manager.dart';
 import 'package:metting/page/message/message_chat_page.dart';
 import 'package:metting/widget/loading.dart';
 import 'package:metting/widget/my_toast.dart';
@@ -52,9 +53,7 @@ class PersonInfoDialog {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       GestureDetector(
-                        onTap: () {
-
-                        },
+                        onTap: () {},
                         child: Image.asset(
                           getImagePath('mine_phone'),
                           width: 52.w,
@@ -66,7 +65,10 @@ class PersonInfoDialog {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Get.to(MessageChatPage(title: info.cname ?? "",uid: "${info.uid}",));
+                          Get.to(MessageChatPage(
+                            title: info.cname ?? "",
+                            uid: "${getMineUID() == 164034 ? 164035 : 164034}",
+                          ));
                         },
                         child: Image.asset(
                           getImagePath('ic_message'),
