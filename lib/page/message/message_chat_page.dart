@@ -75,28 +75,57 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
   }
 
   Widget _itemTextLeft(String content) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        circleNetworkWidget("${controller.mUserData?.avatar}", 36.h, 36.h),
-        SizedBox(
-          width: 6.w,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-          decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.all(Radius.circular(5.w))),
-          child: Text(
-            content,
-            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+    return Container(
+      padding: EdgeInsets.only(right: 12.w, bottom: 10.h),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                // textDirection: TextDirection.ltr,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxWidth: contentWidth, minHeight: 40.h),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 6.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(5.w))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            content,
+                            style: TextStyle(
+                                fontSize: 15.sp, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-        SizedBox(
-          width: 30.w,
-        ),
-      ],
+          SizedBox(
+            width: 6.w,
+          ),
+          SizedBox(
+            height: 46.h,
+            width: 46.h,
+            child: circleNetworkWidget(
+                "${controller.mUserData?.avatar}", 46.h, 46.h),
+          )
+        ],
+      ),
     );
   }
 
