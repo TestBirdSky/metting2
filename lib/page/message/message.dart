@@ -132,7 +132,7 @@ class MessagePage extends BaseUiPage<MessagePageC> {
   Widget _childPage() {
     return SizedBox(
       child: PageView(
-
+        physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         onPageChanged: (index) {
           _setSelectIndex(index);
@@ -148,7 +148,7 @@ class MessagePage extends BaseUiPage<MessagePageC> {
     controller.update(['title']);
   }
 
-  void  _pageSelected() {
+  void _pageSelected() {
     pageController.animateTo(MediaQuery.of(mContext).size.width * selectId,
         duration: const Duration(milliseconds: 300), curve: Curves.linear);
   }

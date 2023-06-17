@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/base/BaseController.dart';
 import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/tool/log.dart';
@@ -369,6 +370,8 @@ class EditInfoC extends BaseController {
       'lang': selectLanguage,
     });
     if (r.isOk()) {
+      EMClient.getInstance.userInfoManager
+          .updateUserInfo(avatarUrl: headerImgUrl, nickname: nickName);
       Get.back();
     } else {
       MyToast.show(r.msg);

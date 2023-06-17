@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/page/login/login.dart';
+
+import '../tool/account_utils.dart';
+import '../widget/dialog_alert.dart';
 
 Future<int?> showVideoPriceDialog({int price = 40}) {
   List<int> listMoney = [];
@@ -136,4 +140,14 @@ Future<int?> _showListWheelDialog(List<Widget> list, int index,
       ),
     ),
   );
+}
+
+void showAccountOfflineDialog() {
+  final context = Get.context;
+  if (context != null) {
+    commonAlertD(context, "你的账号已在其它设备登录", "确认", title: "下线通知",
+        positiveCall: () {
+      Get.offAll(LoginPage());
+    });
+  }
 }

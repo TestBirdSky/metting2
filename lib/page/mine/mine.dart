@@ -7,7 +7,8 @@ import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/database/get_storage_manager.dart';
 import 'package:metting/network/bean/user_data_res.dart';
 import 'package:metting/page/mine/mine_info.dart';
-import 'package:metting/widget/dialog_person_info.dart';
+import 'package:metting/dialog/dialog_person_info.dart';
+import 'package:metting/tool/emc_helper.dart';
 import 'package:metting/widget/image_m.dart';
 import 'package:metting/widget/my_toast.dart';
 
@@ -71,7 +72,8 @@ class MinePage extends BaseUiPage<MineC> {
                     builder: (c) {
                       return GestureDetector(
                         onTap: () {
-                          PersonInfoDialog().showInfoDialog(controller.mineInfo!);
+                          PersonInfoDialog()
+                              .showInfoDialog(controller.mineInfo!);
                         },
                         child:
                             circleNetworkWidget(c.headerImgUrl, 115.w, 115.w),
@@ -85,7 +87,7 @@ class MinePage extends BaseUiPage<MineC> {
             children: [
               InkWell(
                 onTap: () {
-                  createTreadDialog??=CreateTreadDialog();
+                  createTreadDialog ??= CreateTreadDialog();
                   createTreadDialog?.showDialog();
                 },
                 child: Image.asset(

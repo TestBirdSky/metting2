@@ -5,7 +5,7 @@ import '../tool/log.dart';
 abstract class BaseController extends GetxController {
   @override
   void onReady() {
-    logger.i("onReady$this");
+    logger.i("onReady${this.runtimeType}");
     super.onReady();
   }
 }

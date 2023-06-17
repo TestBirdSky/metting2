@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:metting/page/call/call_bean.dart';
 import 'package:metting/page/call/video_chat_page.dart';
 import 'package:metting/page/call/voice_chat_page.dart';
+import 'package:metting/tool/emc_helper.dart';
 import 'package:metting/widget/loading.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,6 +21,8 @@ void showDialogCreateVideoOrVoiceChatWithUser(
         if (data.isOk()) {
           callBean.channelId = data.data?.id ?? "";
           callBean.token = data.data?.token ?? "";
+          await EmcHelper.sendVideoMessage(
+              callBean.token, callBean.channelId, "${callBean.uid}");
           Get.to(VideoChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();
@@ -33,6 +36,8 @@ void showDialogCreateVideoOrVoiceChatWithUser(
         if (data.isOk()) {
           callBean.channelId = data.data?.id ?? "";
           callBean.token = data.data?.token ?? "";
+          await EmcHelper.sendAudioMessage(
+              callBean.token, callBean.channelId, "${callBean.uid}");
           Get.to(VoiceChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();
@@ -54,6 +59,8 @@ void showDialogCreateVideoOrVoiceChatWithListener(
         final data = await createVideoWithListener(callBean.uid);
         if (data.isOk()) {
           callBean.channelId = data.data?.id ?? "";
+          await EmcHelper.sendVideoMessage(
+              callBean.token, callBean.channelId, "${callBean.uid}");
           Get.to(VideoChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();
@@ -66,6 +73,8 @@ void showDialogCreateVideoOrVoiceChatWithListener(
         final data = await createVoiceWithUser(callBean.uid);
         if (data.isOk()) {
           callBean.channelId = data.data?.id ?? "";
+          await EmcHelper.sendAudioMessage(
+              callBean.token, callBean.channelId, "${callBean.uid}");
           Get.to(VoiceChatPage(callBean: callBean));
         } else {}
         LoadingUtils.dismiss();

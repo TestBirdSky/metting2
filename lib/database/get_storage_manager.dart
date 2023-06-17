@@ -104,12 +104,12 @@ class GStorage {
 
   ///获取某个人的基本信息数据
   static UserDataRes? getMineUserBasic() {
-    return getUserBasic(getMineUID());
+    return getUserBasic(getMineUID().toString());
   }
 
   ///获取某个人的基本信息数据
-  static UserDataRes? getUserBasic(int uid) {
-    final userBasicMap = _commonStorage.read('$uid');
+  static UserDataRes? getUserBasic(String uid) {
+    final userBasicMap = _commonStorage.read(uid);
     try {
       logger.i("userBasicMap$userBasicMap --$uid");
       return userBasicMap == null ? null : UserDataRes.fromJson(userBasicMap);
@@ -121,7 +121,8 @@ class GStorage {
 
   ///保存某个人的基本信息数据
   static Future<void> saveUserBasic(UserDataRes userBasic) {
-    logger.i('saveUserBasic ${userBasic.toJson()} --userBasic.uid${userBasic.uid}');
+    logger.i(
+        'saveUserBasic ${userBasic.toJson()} --userBasic.uid${userBasic.uid}');
     return _commonStorage.write('${userBasic.uid}', userBasic.toJson());
   }
 

@@ -83,11 +83,11 @@ Future<BasePageData> autoLogin() async {
     if (token.isEmpty || userId == -1) {
       return BasePageData(-1, "", null);
     }
-    await EMClient.getInstance.login("$userId", token, true);
+    await EmcHelper.signIn("$userId", token);
     return BasePageData(respCodeSuccess, "", null);
   } on EMError catch (e) {
     logger.e("message$e");
-    if (e.code == 218||e.code==200) {
+    if (e.code == 218 || e.code == 200) {
       return BasePageData(respCodeSuccess, "", null);
     }
     return BasePageData(e.code, e.description, null);

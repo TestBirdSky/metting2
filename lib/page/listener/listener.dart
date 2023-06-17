@@ -17,7 +17,7 @@ import '../../base/BaseController.dart';
 import '../../database/get_storage_manager.dart';
 import '../../network/bean/topic_list_res.dart';
 import '../../widget/bottom_popup.dart';
-import '../../widget/dialog_person_info.dart';
+import '../../dialog/dialog_person_info.dart';
 import '../../widget/image_m.dart';
 import '../call/call_bean.dart';
 

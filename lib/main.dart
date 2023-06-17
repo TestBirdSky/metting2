@@ -13,12 +13,6 @@ import 'core/common_configure.dart';
 import 'core/route_config.dart';
 
 void main() async {
-  SystemChrome.setPreferredOrientations(
-    [
-      DeviceOrientation.portraitUp, // 竖屏 Portrait 模式
-      DeviceOrientation.portraitDown,
-    ],
-  );
   await GetStorage.init('firstInitStorage');
   runApp(ScreenUtilInit(
       designSize: const Size(428, 926),
@@ -49,5 +43,11 @@ void main() async {
           getPages: getRouterPage,
         );
       }));
+  SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitUp, // 竖屏 Portrait 模式
+      DeviceOrientation.portraitDown,
+    ],
+  );
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 }

@@ -12,7 +12,7 @@ import '../../base/base_refresh_page.dart';
 import '../../core/common_configure.dart';
 import '../../dialog/dialog_create_voice_video_chat.dart';
 import '../../network/bean/front_response.dart';
-import '../../widget/dialog_person_info.dart';
+import '../../dialog/dialog_person_info.dart';
 import '../../widget/image_m.dart';
 
 class HomeList extends GetView<HomeC> {

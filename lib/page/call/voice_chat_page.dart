@@ -1,15 +1,18 @@
+import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:metting/page/call/voice_chat_controller.dart';
 import 'package:metting/widget/image_m.dart';
 
-import '../../base/BaseController.dart';
 import '../../base/BaseStatelessPage.dart';
 import '../../base/base_chat_controller.dart';
-import '../../base/base_chat_page.dart';
-import '../../tool/agora_helper.dart';
+import '../../network/http_helper.dart';
+import '../../tool/emc_helper.dart';
+import '../../tool/log.dart';
 import '../../tool/view_tools.dart';
+import '../../widget/my_toast.dart';
 import 'call_bean.dart';
 
 class VoiceChatPage extends BaseStatelessPage<VoiceChatController> {
@@ -22,88 +25,158 @@ class VoiceChatPage extends BaseStatelessPage<VoiceChatController> {
   @override
   Widget createBody(BuildContext context) {
     return Stack(
-      children: [_widgetPersonIcon(), _topInfo(), _bottomBtn()],
+      alignment: Alignment.center,
+      children: [_widgetPersonIcon(), _topInfo(), _timer(), _bottomBtn()],
     );
   }
 
   @override
   VoiceChatController initController() => VoiceChatController(callBean);
 
+  Widget _timer() {
+    return GetBuilder<VoiceChatController>(
+        id: "connectedTime",
+        builder: (builder) {
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: EdgeInsets.only(bottom: 190.h),
+              child: Text(
+                controller.mConnectedTime,
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
+            ),
+          );
+        });
+  }
+
   Widget _bottomBtn() {
+    return GetBuilder<VoiceChatController>(
+        id: 'join',
+        builder: (c) {
+          return c.callBean.isReceive && !c.isAllowJoin
+              ? _receiveView()
+              : Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: 180.h,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(flex: 3, child: Text('')),
+                        _hfButton(),
+                        Expanded(flex: 2, child: Text('')),
+                        GestureDetector(
+                          onTap: () {
+                            controller.disconnected();
+                            _onBack();
+                          },
+                          child: Image.asset(
+                            getImagePath('ic_disconnect_call'),
+                            width: 95.w,
+                            height: 36.h,
+                          ),
+                        ),
+                        Expanded(flex: 2, child: Text('')),
+                        _mircButton(),
+                        Expanded(flex: 3, child: Text('')),
+                      ],
+                    ),
+                  ),
+                );
+        });
+  }
+
+  Widget _receiveView() {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: 200.h,
+        height: 180.h,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _hfButton(),
-            SizedBox(
-              width: 30.w,
-            ),
+            const Expanded(flex: 2, child: Text('')),
             GestureDetector(
               onTap: () {
+                controller.disAllow();
                 _onBack();
               },
               child: Image.asset(
-                getImagePath('ic_disconnect_call'),
-                width: 95.w,
-                height: 36.h,
+                getImagePath('ic_refuse_chat'),
+                width: 60.w,
+                height: 60.w,
               ),
             ),
-            SizedBox(
-              width: 30.w,
+            const Expanded(flex: 3, child: Text('')),
+            GestureDetector(
+              onTap: () {
+                controller.allow();
+              },
+              child: Image.asset(
+                getImagePath('ic_agree_audio'),
+                width: 60.w,
+                height: 60.w,
+              ),
             ),
-            _mircButton()
+            const Expanded(flex: 2, child: Text('')),
           ],
         ),
       ),
     );
   }
 
-  var _isOpenHF = false;
-  var _isOpenMirc = true;
+
 
   Widget _hfButton() {
-    return StatefulBuilder(builder: (context, state) {
-      return GestureDetector(
-        onTap: () {
-          _isOpenHF = !_isOpenHF;
-          state(() {});
-        },
-        child: Column(
-          children: [
-            Image.asset(
-              getImagePath(_isOpenHF ? "ic_hf_open" : "ic_hf_close"),
-              width: 44.h,
-              height: 44.h,
-            ),
-          ],
-        ),
-      );
-    });
+    return SizedBox(
+      width: 44.h,
+      height: 44.h,
+      child: StatefulBuilder(builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            controller.changeHFStatus();
+            state(() {});
+          },
+          child: Column(
+            children: [
+              Image.asset(
+                getImagePath(controller.isOpenHF ? "ic_hf_open" : "ic_hf_close"),
+                width: 44.h,
+                height: 44.h,
+              ),
+            ],
+          ),
+        );
+      }),
+    );
   }
 
   Widget _mircButton() {
-    return StatefulBuilder(builder: (context, state) {
-      return GestureDetector(
-        onTap: () {
-          _isOpenMirc = !_isOpenMirc;
-          state(() {});
-        },
-        child: Column(
-          children: [
-            Image.asset(
-              getImagePath(_isOpenMirc ? "ic_mir_on" : "ic_mir_off"),
-              width: 44.h,
-              height: 44.h,
-            ),
-          ],
-        ),
-      );
-    });
+    return SizedBox(
+      width: 44.h,
+      height: 44.h,
+      child: StatefulBuilder(builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            controller.changeMircStatus();
+            state(() {});
+          },
+          child: Column(
+            children: [
+              Image.asset(
+                getImagePath(controller.isOpenMirc ? "ic_mir_on" : "ic_mir_off"),
+                width: 44.h,
+                height: 44.h,
+              ),
+            ],
+          ),
+        );
+      }),
+    );
   }
 
   void _onBack() {
@@ -111,49 +184,53 @@ class VoiceChatPage extends BaseStatelessPage<VoiceChatController> {
   }
 
   Widget _widgetPersonIcon() {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        height: 248.w,
-        width: 248.w,
-        margin: EdgeInsets.only(top: 120.h),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.asset(
-              getImagePath(
-                'ic_red_circle',
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(flex: 1, child: Text('')),
+        Container(
+          height: 248.w,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                getImagePath(
+                  'ic_red_circle',
+                ),
+                fit: BoxFit.fill,
+                width: 248.w,
+                height: 248.w,
               ),
-              fit: BoxFit.fill,
-              width: 248.w,
-              height: 248.w,
-            ),
-            Padding(
-              padding: EdgeInsets.all(0.h),
-              child: ClipOval(
-                child: Container(
-                  width: 115.w,
-                  height: 115.w,
-                  padding: EdgeInsets.all(1.w),
-                  child: GestureDetector(
-                    onTap: () {
-                      // PersonInfoDialog().showInfoDialog(controller.mineInfo!);
-                    },
+              Padding(
+                padding: EdgeInsets.all(0.h),
+                child: ClipOval(
+                  child: Container(
+                    width: 115.w,
+                    height: 115.w,
+                    padding: EdgeInsets.all(1.w),
                     child:
-                        circleNetworkWidget(callBean.userAvator, 108.w, 108.w),
+                        circleNetworkWidget(callBean.userAvator, 115.w, 115.w),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+        SizedBox(
+          height: 15.h,
+        ),
+        Text(
+          callBean.userName,
+          style: TextStyle(color: Colors.white, fontSize: 16.sp),
+        ),
+        Expanded(flex: 3, child: Text('')),
+      ],
     );
   }
 
   Widget _topInfo() {
     return GetBuilder<VoiceChatController>(
-        id: 'title',
+        id: 'page',
         builder: (c) {
           return Align(
             alignment: Alignment.topCenter,
@@ -166,25 +243,5 @@ class VoiceChatPage extends BaseStatelessPage<VoiceChatController> {
             ),
           );
         });
-  }
-}
-
-class VoiceChatController extends BaseChatController {
-  VoiceChatController(this.callBean);
-  late CallBean callBean;
-
-  String getTitle() {
-    return "正在呼叫...";
-  }
-
-  @override
-  void initAgoraFinish() {
-    engine.joinChannel(
-      token: callBean.token,
-      channelId: callBean.channelId,
-      options: const ChannelMediaOptions(
-          clientRoleType: ClientRoleType.clientRoleBroadcaster),
-      uid: 0,
-    );
   }
 }

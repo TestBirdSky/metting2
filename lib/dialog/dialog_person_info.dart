@@ -14,7 +14,7 @@ import '../network/bean/tread_list.dart';
 import '../network/bean/user_data_res.dart';
 import '../network/http_helper.dart';
 import '../tool/view_tools.dart';
-import 'image_m.dart';
+import '../widget/image_m.dart';
 
 class PersonInfoDialog {
   List<TreadBean> treadBeanList = [];
@@ -52,30 +52,36 @@ class PersonInfoDialog {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: Image.asset(
-                          getImagePath('mine_phone'),
-                          width: 52.w,
-                          height: 52.w,
-                        ),
-                      ),
+                      info.uid == getMineUID()
+                          ? Text('')
+                          : GestureDetector(
+                              onTap: () {
+
+                              },
+                              child: Image.asset(
+                                getImagePath('mine_phone'),
+                                width: 52.w,
+                                height: 52.w,
+                              ),
+                            ),
                       SizedBox(
                         height: 20.h,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(MessageChatPage(
-                            title: info.cname ?? "",
-                            uid: "${getMineUID() == 164034 ? 164035 : 164034}",
-                          ));
-                        },
-                        child: Image.asset(
-                          getImagePath('ic_message'),
-                          width: 52.w,
-                          height: 52.w,
-                        ),
-                      ),
+                      info.uid == getMineUID()
+                          ? Text('')
+                          : GestureDetector(
+                              onTap: () {
+                                Get.to(MessageChatPage(
+                                  title: info.cname ?? "",
+                                  uid: "${info.uid}",
+                                ));
+                              },
+                              child: Image.asset(
+                                getImagePath('ic_message'),
+                                width: 52.w,
+                                height: 52.w,
+                              ),
+                            ),
                     ],
                   )),
             ),

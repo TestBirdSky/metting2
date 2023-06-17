@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:im_flutter_sdk/im_flutter_sdk.dart';
 import 'package:metting/network/http_helper.dart';
-import 'package:metting/page/home/home.dart';
 import 'package:metting/page/login/login.dart';
 import 'package:metting/tool/log.dart';
 import '../base/BaseController.dart';
