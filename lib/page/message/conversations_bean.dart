@@ -15,6 +15,14 @@ class ConversationBean {
     switch (body?.type) {
       case MessageType.TXT:
         return (body as EMTextMessageBody).content;
+      case MessageType.VOICE:
+        return "[语音]";
+      case MessageType.IMAGE:
+        return "[图片]";
+      case MessageType.VIDEO:
+        return "[视频]";
+      case MessageType.FILE:
+        return "[文件]";
       case MessageType.CUSTOM:
         final b = (body as EMCustomMessageBody);
         switch (b.event) {
@@ -23,6 +31,9 @@ class ConversationBean {
           case CustomEvent.AUDIO:
             return "[语音通话]";
         }
+        break;
+      default:
+        return "[未知消息]";
         break;
     }
     return "";

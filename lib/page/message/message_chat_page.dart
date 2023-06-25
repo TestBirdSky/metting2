@@ -6,6 +6,7 @@ import 'package:metting/base/BaseController.dart';
 import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/database/get_storage_manager.dart';
 import 'package:metting/network/bean/user_data_res.dart';
+import 'package:metting/page/message/message_chat_controller.dart';
 import 'package:metting/tool/emc_helper.dart';
 import 'package:metting/tool/log.dart';
 import 'package:metting/widget/image_m.dart';
@@ -14,6 +15,7 @@ import '../../core/common_configure.dart';
 import '../../dialog/dialog_create_voice_video_chat.dart';
 import '../../network/http_helper.dart';
 import '../../tool/view_tools.dart';
+import '../../widget/bottom_popup.dart';
 import '../call/call_bean.dart';
 
 class MessageChatPage extends BaseUiPage<MessageChatController> {
@@ -96,17 +98,77 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
     Widget widget = Text('');
     switch (msg.body.type) {
       case MessageType.TXT:
-        {
-          EMTextMessageBody body = msg.body as EMTextMessageBody;
-          final text = Text(
-            body.content,
-            style: TextStyle(fontSize: 15.sp, color: Colors.white),
-          );
-          if (msg.from == uid) {
-            widget = _itemTextLeft(text);
-          } else {
-            widget = _itemRight(text);
-          }
+        EMTextMessageBody body = msg.body as EMTextMessageBody;
+        final text = Text(
+          body.content,
+          style: TextStyle(fontSize: 15.sp, color: Colors.white),
+        );
+        if (msg.from == uid) {
+          widget = _itemTextLeft(text);
+        } else {
+          msg.status;
+          widget = _itemRight(text, msg);
+        }
+        break;
+      case MessageType.VOICE:
+        EMVoiceMessageBody body = msg.body as EMVoiceMessageBody;
+        if (msg.from == uid) {
+          widget = _itemTextLeft(GestureDetector(
+            onTap: () {
+              controller.playAudio(msg.msgId, body);
+            },
+            child: Container(
+              width: 76.w,
+              color: Colors.transparent,
+              child: Row(
+                children: [
+                  Image.asset(
+                    getImagePath('audio_left'),
+                    color:
+                        controller.curPlayMsgId == msg.msgId ? Colors.grey : Colors.white,
+                    width: 18.w,
+                    height: 18.h,
+                  ),
+                  SizedBox(width: 10.w,),
+                  Text(
+                    "${body.duration}''",
+                    style: TextStyle(fontSize: 15.sp, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ));
+        } else {
+          msg.status;
+          widget = _itemRight(
+              GestureDetector(
+                onTap: () {
+                  controller.playAudio(msg.msgId, body);
+                },
+                child: Container(
+                  width: 76.w,
+                  color: Colors.transparent,
+                  child:
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${body.duration}''",
+                        style: TextStyle(fontSize: 15.sp, color: Colors.white),
+                      ),
+                      SizedBox(width: 10.w,),
+                      Image.asset(
+                        getImagePath('audio_right'),
+                        color:
+                        controller.curPlayMsgId == msg.msgId ? Colors.grey : Colors.white,
+                        width: 18.w,
+                      ),
+
+                    ],
+                  ),
+                ),
+              ),
+              msg);
         }
         break;
       case MessageType.CUSTOM:
@@ -117,21 +179,38 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
               if (msg.from == uid) {
                 widget = _itemTextLeft(_videoItem());
               } else {
-                widget = _itemRight(_videoItem());
+                widget = _itemRight(_videoItem(), msg);
               }
               break;
             case CustomEvent.AUDIO:
               if (msg.from == uid) {
                 widget = _itemTextLeft(_audioItem());
               } else {
-                widget = _itemRight(_audioItem());
+                widget = _itemRight(_audioItem(), msg);
               }
               break;
           }
         }
         break;
     }
-    return widget;
+    return GestureDetector(
+        child: widget,
+        onLongPress: (){
+          showDeleteMsgDialog((){
+            controller.delMessage(msg);
+          });
+        },
+        onTap: () {
+          logger.i('hideKeyboard');
+          hideKeyboard(mContext);
+        });
+  }
+
+  void hideKeyboard(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+      FocusManager.instance.primaryFocus!.unfocus();
+    }
   }
 
   Widget _audioItem() {
@@ -176,6 +255,7 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
 
   Widget _itemTextLeft(Widget content) {
     return Container(
+      color: Colors.transparent,
       padding: EdgeInsets.only(left: 12.w, bottom: 10.h),
       child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -223,8 +303,9 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
 
   final contentWidth = (ScreenUtil().screenWidth - 120.w);
 
-  Widget _itemRight(Widget content) {
+  Widget _itemRight(Widget content, EMMessage msg) {
     return Container(
+      color: Colors.transparent,
       padding: EdgeInsets.only(right: 12.w, bottom: 10.h),
       child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -253,6 +334,7 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
                       ),
                     ),
                   ),
+                  _msgStatus(msg),
                 ],
               ),
             ],
@@ -271,64 +353,169 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
     );
   }
 
+  Widget _msgStatus(EMMessage msg) {
+    if (msg.status == MessageStatus.FAIL) {
+      return GestureDetector(
+        onTap: () {
+          controller.resendMessage(msg);
+        },
+        child: Padding(
+          padding: EdgeInsets.only(right: 6.w),
+          child: Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: 24.w,
+          ),
+        ),
+      );
+    } else if (msg.status == MessageStatus.PROGRESS) {
+      return Container(
+          margin: EdgeInsets.only(right: 6.w),
+          width: 18.w,
+          height: 18.w,
+          child: CircularProgressIndicator(
+            color: Colors.grey,
+            strokeWidth: 1.w,
+          ));
+    } else {
+      return Text('');
+    }
+  }
+
+  var isSendVoice = false;
+  double start = 0.0;
+  double offset = 0.0;
+  bool isUpCancel = false;
+
   Widget _bottomWidget() {
     return Container(
       height: 76.h,
       padding: EdgeInsets.symmetric(horizontal: 12.w),
       color: Colors.black,
-      child: Row(
-        children: [
-          Expanded(
-              child: Container(
-            height: 46.h,
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            decoration: BoxDecoration(
-                color: C.PAGE_THEME_BG,
-                borderRadius: BorderRadius.all(Radius.circular(8.w))),
-            child: TextField(
-              textAlignVertical: TextAlignVertical.top,
-              style: TextStyle(
-                fontSize: 18.sp,
-                color: C.whiteFFFFFF,
-              ),
-              decoration: const InputDecoration(
-                  filled: false,
-                  contentPadding: EdgeInsets.all(0),
-                  counterText: '',
-                  //此处控制最大字符是否显示
-                  alignLabelWithHint: true,
-                  enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color(0x00FEC693), width: 0)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color(0x00FEC693), width: 0))),
-              onChanged: (value) {},
-              controller: _controller,
+      child: StatefulBuilder(builder: (context, state) {
+        return Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                isSendVoice = !isSendVoice;
+                if (isSendVoice) {
+                  hideKeyboard(mContext);
+                }
+                state(() {});
+              },
+              child: isSendVoice
+                  ? Container(
+                      margin: EdgeInsets.only(right: 8.0.w),
+                      child: Icon(
+                        Icons.keyboard_rounded,
+                        color: Colors.white,
+                        size: 34.w,
+                      ),
+                    )
+                  : Container(
+                      margin: EdgeInsets.only(right: 8.0.w),
+                      child: Icon(
+                        Icons.keyboard_voice_rounded,
+                        color: Colors.white,
+                        size: 34.w,
+                      ),
+                    ),
             ),
-          )),
-          SizedBox(
-            width: 10.w,
-          ),
-          Container(
-            height: 46.h,
-            width: 68.w,
-            decoration: BoxDecoration(
-                color: const Color(0xFFFEC693),
-                borderRadius: BorderRadius.all(Radius.circular(12.w))),
-            child: TextButton(
-                onPressed: () {
-                  final text = _controller.text;
-                  controller.sendTextMessage(text);
-                  _controller.clear();
-                },
-                child: Text(
-                  '发 送',
-                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                )),
-          )
-        ],
-      ),
+            Expanded(
+                child: Container(
+              height: 46.h,
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              decoration: BoxDecoration(
+                  color: C.PAGE_THEME_BG,
+                  borderRadius: BorderRadius.all(Radius.circular(8.w))),
+              child: isSendVoice
+                  ? GestureDetector(
+                      onVerticalDragStart: (details) {
+                        logger.i("onVerticalDragStart");
+                        isUpCancel = false;
+                        start = details.globalPosition.dy;
+                        controller.startRecoding();
+                      },
+                      onVerticalDragEnd: (details) {
+                        logger.i("onVerticalDragEnd $isUpCancel");
+                        if (isUpCancel) {
+                          controller.cancelRecoding();
+                        } else {
+                          controller.stopRecodingAndStartSend();
+                        }
+                      },
+                      onVerticalDragUpdate: (details) {
+                        logger.i("onVerticalDragUpdate $start  $offset");
+                        offset = details.globalPosition.dy;
+                        isUpCancel = start - offset > 70 ? true : false;
+                        // if (isUpCancel) {
+                        //   _controller.cancelRecodeText.value = "松开取消发送";
+                        // } else {
+                        //   _controller.cancelRecodeText.value =
+                        //   "松开发送，上滑取消";
+                        // }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        alignment: Alignment.center,
+                        child: Text(
+                          '按住 说话',
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 22.sp),
+                        ),
+                      ),
+                    )
+                  : TextField(
+                      textAlignVertical: TextAlignVertical.top,
+                      autofocus: true,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        color: C.whiteFFFFFF,
+                      ),
+                      decoration: const InputDecoration(
+                          filled: false,
+                          contentPadding: EdgeInsets.all(0),
+                          counterText: '',
+                          //此处控制最大字符是否显示
+                          alignLabelWithHint: true,
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0x00FEC693), width: 0)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0x00FEC693), width: 0))),
+                      onChanged: (value) {},
+                      controller: _controller,
+                    ),
+            )),
+            SizedBox(
+              width: isSendVoice ? 24.w : 10.w,
+            ),
+            isSendVoice
+                ? Text('')
+                : Container(
+                    height: 46.h,
+                    width: 68.w,
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFFEC693),
+                        borderRadius: BorderRadius.all(Radius.circular(12.w))),
+                    child: TextButton(
+                        onPressed: () {
+                          final text = _controller.text;
+                          controller.sendTextMessage(text);
+                          _controller.clear();
+                        },
+                        child: Text(
+                          '发 送',
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 16.sp),
+                        )),
+                  )
+          ],
+        );
+      }),
     );
   }
 
@@ -350,119 +537,5 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
   @override
   List<Widget>? action() {
     return super.action();
-  }
-}
-
-class MessageChatController extends BaseController {
-  MessageChatController(this.uid);
-
-  List<EMMessage> listMessage = [];
-  String uid;
-  String minUid = getMineUID().toString();
-  EMConversation? emConversation;
-  UserDataRes? mUserData;
-
-  UserDataRes? mineInfo = GStorage.getMineUserBasic();
-
-  bool noMoreDate = true;
-  bool isLoading = false;
-
-  @override
-  void onInit() {
-    super.onInit();
-    createOrGetConversation();
-    mUserData = GStorage.getUserBasic(uid);
-    _getUserInfo();
-  }
-
-  void sendTextMessage(String msg) async {
-    final mesage = await EmcHelper.sendTxtMessage(uid, msg);
-    listMessage.insert(0, mesage);
-    update(['content']);
-    // sendMsg(msg, uid);
-  }
-
-  void _getUserInfo() async {
-    mUserData = (await getUserData(int.parse(uid))).data;
-    if (mUserData != null) {
-      GStorage.saveUserBasic(mUserData!);
-    }
-    update(['title']);
-    update(['content']);
-  }
-
-  void createOrGetConversation() async {
-    logger.i("message createOrGetConversation$uid");
-    emConversation =
-        await EmcHelper.getConversationMessage(int.parse(uid), getMineUID());
-    logger.i("message$emConversation  -->${emConversation?.id} ");
-    getMessage();
-    emConversation?.markAllMessagesAsRead();
-    EMClient.getInstance.chatManager.addEventHandler(
-      uid,
-      EMChatEventHandler(
-        onMessagesReceived: (list) => {
-          logger.i("onMessagesReceived${list.length}-->${list.first.from}-->"),
-          if (list.isNotEmpty)
-            {
-              list.forEach((element) {
-                if (element.from != "admin") {
-                  logger.i("onMessagesReceived${list[0].body}");
-                  // bool isNeed = EmcHelper.handleCallMessage(element);
-                  if (!listMessage.contains(element)) {
-                    listMessage.insert(0, element);
-                  }
-                }
-              }),
-              update(['content']),
-            }
-        },
-      ),
-    );
-  }
-
-  void getMessage() async {
-    final list = await emConversation?.loadMessages(
-            startMsgId: '', direction: EMSearchDirection.Up) ??
-        [];
-    if (list.isNotEmpty) {
-      if (list.length >= 2) {
-        list.sort((a, b) => b.serverTime.compareTo(a.serverTime));
-      }
-      listMessage.addAll(list);
-      update(['content']);
-    }
-    noMoreDate = false;
-    if (list.length < 20) {
-      noMoreDate = true;
-    }
-  }
-
-  void loadMessage() async {
-    isLoading = true;
-    final msgId = listMessage.last.msgId;
-    final list = await emConversation?.loadMessages(
-            startMsgId: msgId, direction: EMSearchDirection.Up) ??
-        [];
-    if (list.isNotEmpty) {
-      if (list.length >= 2) {
-        list.sort((a, b) => b.serverTime.compareTo(a.serverTime));
-      }
-      listMessage.addAll(list);
-      update(['content']);
-    }
-    isLoading = false;
-    noMoreDate = false;
-    if (list.length < 20) {
-      noMoreDate = true;
-    }
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    logger.i("onClose$this");
-    emConversation?.markAllMessagesAsRead();
-    EMClient.getInstance.chatManager.removeEventHandler(uid);
   }
 }

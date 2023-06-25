@@ -599,3 +599,16 @@ Future<BasePageData> sendMsg(String message, String userid,
     return errorBasePageData;
   }
 }
+
+//实名认证
+Future<BasePageData> addCertification(int type,
+    {List<String> files = const []}) async {
+  try {
+    Response response = await getDio().post('index/share/addCertification',
+        data: _addCommonInfo({'type': type, 'files': files}));
+    return syncData(response);
+  } catch (e) {
+    logger.e("$e");
+    return errorBasePageData;
+  }
+}

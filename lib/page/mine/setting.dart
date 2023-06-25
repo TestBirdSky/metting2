@@ -7,6 +7,7 @@ import 'package:metting/base/BaseUiPage.dart';
 import 'package:metting/core/common_configure.dart';
 import 'package:metting/page/login/login.dart';
 import 'package:metting/page/mine/feedback.dart';
+import 'package:metting/page/mine/verified/card_verified.dart';
 import 'package:metting/tool/emc_helper.dart';
 
 import '../../base/BaseController.dart';
@@ -30,12 +31,17 @@ class SettingPage extends BaseUiPage<SettingC> {
             height: 30.h,
           ),
           _Item('隐私政策', () {}),
+          _Item('实名认证', () {
+            Get.to(CardVerifiedPage());
+          }),
           _Item('用户协议', () {}),
           _Item('关于我们', () {}),
           _Item('意见反馈', () {
             Get.to(FeedbackPage());
           }),
-          _Item('清除缓存', () {}),
+          _Item('清除缓存', () {
+            MyToast.show('清除成功');
+          }),
           // _Item('随手好评', () {}),
           SizedBox(
             height: 50.h,

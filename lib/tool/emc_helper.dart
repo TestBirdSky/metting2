@@ -191,9 +191,15 @@ class EmcHelper {
   ) async {
     var msg =
         EMMessage.createTxtSendMessage(targetId: chatId, content: msgContent);
-    final message = await EMClient.getInstance.chatManager.sendMessage(
-      msg,
-    );
+    final message = await EMClient.getInstance.chatManager.sendMessage(msg);
+    return message;
+  }
+
+  static Future<EMMessage> sendVoiceMessage(String chatId, String filePath,
+      {int duration = 0}) async {
+    var msg = EMMessage.createVoiceSendMessage(
+        targetId: chatId, filePath: filePath, duration: duration);
+    final message = await EMClient.getInstance.chatManager.sendMessage(msg);
     return message;
   }
 
