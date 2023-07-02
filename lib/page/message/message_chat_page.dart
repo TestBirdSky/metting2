@@ -46,6 +46,7 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
         Column(
           children: [Expanded(child: contentW()), _bottomWidget()],
         ),
+        _recordWidget(),
         Padding(
           padding: EdgeInsets.only(right: 16.w),
           child: Align(
@@ -124,12 +125,15 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
                 children: [
                   Image.asset(
                     getImagePath('audio_left'),
-                    color:
-                        controller.curPlayMsgId == msg.msgId ? Colors.grey : Colors.white,
+                    color: controller.curPlayMsgId == msg.msgId
+                        ? Colors.grey
+                        : Colors.white,
                     width: 18.w,
                     height: 18.h,
                   ),
-                  SizedBox(width: 10.w,),
+                  SizedBox(
+                    width: 10.w,
+                  ),
                   Text(
                     "${body.duration}''",
                     style: TextStyle(fontSize: 15.sp, color: Colors.white),
@@ -148,22 +152,23 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
                 child: Container(
                   width: 76.w,
                   color: Colors.transparent,
-                  child:
-                  Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
                         "${body.duration}''",
                         style: TextStyle(fontSize: 15.sp, color: Colors.white),
                       ),
-                      SizedBox(width: 10.w,),
+                      SizedBox(
+                        width: 10.w,
+                      ),
                       Image.asset(
                         getImagePath('audio_right'),
-                        color:
-                        controller.curPlayMsgId == msg.msgId ? Colors.grey : Colors.white,
+                        color: controller.curPlayMsgId == msg.msgId
+                            ? Colors.grey
+                            : Colors.white,
                         width: 18.w,
                       ),
-
                     ],
                   ),
                 ),
@@ -195,8 +200,8 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
     }
     return GestureDetector(
         child: widget,
-        onLongPress: (){
-          showDeleteMsgDialog((){
+        onLongPress: () {
+          showDeleteMsgDialog(() {
             controller.delMessage(msg);
           });
         },
@@ -447,13 +452,8 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
                       onVerticalDragUpdate: (details) {
                         logger.i("onVerticalDragUpdate $start  $offset");
                         offset = details.globalPosition.dy;
-                        isUpCancel = start - offset > 70 ? true : false;
-                        // if (isUpCancel) {
-                        //   _controller.cancelRecodeText.value = "松开取消发送";
-                        // } else {
-                        //   _controller.cancelRecodeText.value =
-                        //   "松开发送，上滑取消";
-                        // }
+                        isUpCancel = start - offset > 100.h ? true : false;
+                        controller.updateCancleStatus(isUpCancel);
                       },
                       child: Container(
                         width: double.infinity,
@@ -521,6 +521,99 @@ class MessageChatPage extends BaseUiPage<MessageChatController> {
 
   @override
   MessageChatController initController() => MessageChatController(uid);
+
+  Widget _recordWidget() {
+    return GetBuilder<MessageChatController>(
+        id: 'recordVoice',
+        builder: (c) {
+          return c.isRecordingVoice
+              ? Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 76.h),
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black45,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.w, vertical: 160.h),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              c.isSelectedCancel ? "松开 取消" : '',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 16.sp),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            ClipOval(
+                              child: c.isSelectedCancel
+                                  ? Container(
+                                      width: 100.w,
+                                      height: 100.w,
+                                      color: Colors.white,
+                                      child: Icon(
+                                        Icons.clear,
+                                        color: Colors.black,
+                                        size: 40.w,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 80.w,
+                                      height: 80.w,
+                                      color: Colors.grey,
+                                      child: Icon(Icons.clear,
+                                          color: Colors.white, size: 36.w),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              c.isSelectedCancel ? '' : "松开 发送",
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 16.sp),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Container(
+                              width: double.infinity,
+                              height: 106.h,
+                              padding: EdgeInsets.only(top: 10.h),
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                "录音中...",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 22.sp),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(56.w),
+                                    topLeft: Radius.circular(56.w)),
+                              ),
+                            ),
+                          ],
+                        ))
+                  ],
+                )
+              : Text('');
+        });
+  }
 
   @override
   Widget? titleWidget() {

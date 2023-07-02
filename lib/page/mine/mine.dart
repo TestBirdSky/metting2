@@ -19,7 +19,6 @@ import '../../widget/loading.dart';
 import 'mine_story.dart';
 
 class MinePage extends BaseUiPage<MineC> {
-  CreateTreadDialog? createTreadDialog;
 
   MinePage() : super(title: "我的");
 
@@ -87,8 +86,7 @@ class MinePage extends BaseUiPage<MineC> {
             children: [
               InkWell(
                 onTap: () {
-                  createTreadDialog ??= CreateTreadDialog();
-                  createTreadDialog?.showDialog();
+                  CreateTreadDialog().showDialog();
                 },
                 child: Image.asset(
                   getImagePath('mine_edit'),

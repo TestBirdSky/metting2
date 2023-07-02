@@ -23,6 +23,8 @@ class MessageChatController extends BaseController {
 
   bool noMoreDate = true;
   bool isLoading = false;
+  bool isRecordingVoice = false;
+  bool isSelectedCancel = false;
 
   @override
   void onInit() {
@@ -181,13 +183,19 @@ class MessageChatController extends BaseController {
   void startRecoding() {
     _recordAudioHelper ??= RecordAudioHelper();
     _recordAudioHelper?.startRecorder();
+    isRecordingVoice = true;
+    update(['recordVoice']);
   }
 
   void cancelRecoding() {
     _recordAudioHelper?.cancelRecording();
+    isRecordingVoice = false;
+    update(['recordVoice']);
   }
 
   void stopRecodingAndStartSend() async {
+    isRecordingVoice = false;
+    update(['recordVoice']);
     final filePath = await _recordAudioHelper?.stopRecording();
     if (filePath != null) {
       _sendVoiceMessage(filePath, _recordAudioHelper?.recorderTime ?? 0);
@@ -214,5 +222,13 @@ class MessageChatController extends BaseController {
     logger.i("sendTextMessage->${mesage.msgId} --$mesage}");
     listMessage.insert(0, mesage);
     update(['content']);
+  }
+
+  void updateCancleStatus(bool isCancel){
+    if(isCancel!=isSelectedCancel){
+      isSelectedCancel=isCancel;
+      update(['recordVoice']);
+    }
+
   }
 }
